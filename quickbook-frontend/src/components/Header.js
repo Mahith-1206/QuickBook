@@ -10,13 +10,27 @@ import MenuIcon from "@mui/icons-material/Menu"; // Assuming you use it as the a
 import { Box, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import LoginForm from "./LoginForm";
 
-function Header() {
+const  Header = ()=> {
+
+  const [showLogin, setShowLogin] = useState(false);
+
+  const handleClick =()=>{
+    setShowLogin(true);
+  };
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
     navigate("/");
   };
+
+  // const [seen, setSeen] = useState(false);
+
+  // function togglePop () {
+  //   setSeen(!seen)
+  // };
   return (
     <AppBar position="static" sx={{ minHeight: "10px" }}>
       <Toolbar sx={{ minHeight: "10px", marginBottomx: 15 }}>
@@ -56,9 +70,12 @@ function Header() {
             }}
           />
         </Box>
-        <Button color="inherit" sx={{ ml: 2 }}>
+        <Button onClick={handleClick} color="inherit" sx={{ ml: 2 }} >
+        {/* {seen ? <Login toggle={togglePop} /> : null} */}
+        
           Login/Signup
         </Button>
+        {showLogin && <LoginForm/>}
       </Toolbar>
     </AppBar>
   );

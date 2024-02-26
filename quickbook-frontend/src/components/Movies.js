@@ -275,7 +275,7 @@ const Movies = () => {
               <Button
                 variant="contained"
                 onClick={bookTicket}
-                sx={{ marginTop: 1, marginRight: 5 }}
+                sx={{ marginTop: 1, marginRight: 10 }}
               >
                 Book Now
               </Button>

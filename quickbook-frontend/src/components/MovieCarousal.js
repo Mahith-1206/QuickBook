@@ -142,7 +142,7 @@ export default function MovieCarousal() {
               <Button
                 variant="contained"
                 onClick={bookTicket}
-                sx={{ marginTop: 1, marginRight: 5, marginLeft: 12 }}
+                sx={{ marginTop: 1, marginRight: 5, marginLeft: 20 }}
               >
                 Book Now
               </Button>

@@ -55,26 +55,40 @@ export default function MovieCarousal() {
     navigate("/movie");
   };
 
-  const moviePosters = [
-    Image1,
-    Image2,
-    Image3,
-    Image4,
-    Image5,
-    Image6,
-    Image7,
-    Image8,
-    Image9,
+  const movies = [
+    { id: 1, title: 'Ram Sethu', poster: Image1},
+    { id: 2, title: 'Black Panther', poster: Image2 },
+    { id: 3, title: 'Bh', poster: Image3},
+    { id: 4, title: 'Drishyam', poster: Image4 },
+    { id: 5, title: 'Dhrishyam 2', poster: Image5},
+    { id: 6, title: 'UUnchai', poster: Image6 },
+    { id: 7, title: 'Inception', poster: Image7},
+    { id: 8, title: 'Interstellar', poster: Image8 },
+    { id: 9, title: 'Inception', poster: Image9},
+    // Add more movie objects here
   ];
 
+  // const moviePosters = [
+  //   Image1,
+  //   Image2,
+  //   Image3,
+  //   Image4,
+  //   Image5,
+  //   Image6,
+  //   Image7,
+  //   Image8,
+  //   Image9,
+  // ];
+
+  // old version(mahith)
   return (
     <div style={{ marginTop: "35px" }}>
       <h3>Now showing</h3>
       <Slider {...settings}>
-        {moviePosters.map((poster, index) => (
+        {movies.map((index) => (
           <div key={index} style={{}}>
             <img
-              src={poster}
+              src={index.poster}
               alt={`Movie Poster ${index + 1}`}
               style={{ width: "80%", height: "auto" }}
             />
@@ -90,4 +104,31 @@ export default function MovieCarousal() {
       </Slider>
     </div>
   );
+
+
+
+  //new version
+  // return (
+  //   <div style={{ marginTop: "35px" }}>
+  //     <h3>Now showing</h3>
+  //     <Slider {...settings}>
+  //       {movies.map((x) => (
+  //         <div key={x} style={{}}>
+  //           <img
+  //             src={x.poster}
+  //             alt={`Movie Poster ${x + 1}`}
+  //             style={{ width: "80%", height: "auto" }}
+  //           />
+  //           <Button
+  //             variant="contained"
+  //             onClick={bookTicket}
+  //             sx={{ marginTop: 1, marginRight: 5 }}
+  //           >
+  //             Book Now
+  //           </Button>
+  //         </div>
+  //       ))}
+  //     </Slider>
+  //   </div>
+  // );
 }

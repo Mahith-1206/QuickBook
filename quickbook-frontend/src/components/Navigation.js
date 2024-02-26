@@ -5,8 +5,23 @@ import Box from "@mui/material/Box";
 
 import Button from "@mui/material/Button";
 import { flexbox } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 
 function Navigation() {
+  const navigate = useNavigate();
+
+  const moviePage = () => {
+    navigate("/movies");
+  };
+
+  const eventPage = () => {
+    navigate("/event");
+  };
+
+  const showPage = () => {
+    navigate("/show");
+  };
+
   return (
     <div style={{ backgroundColor: "black" }}>
       <AppBar
@@ -17,9 +32,15 @@ function Navigation() {
       >
         <Toolbar>
           <div style={{ marginTop: "-30px" }}>
-            <Button color="inherit">Movies</Button>
-            <Button color="inherit">Events</Button>
-            <Button color="inherit">Shows</Button>
+            <Button color="inherit" onClick={moviePage}>
+              Movies
+            </Button>
+            <Button color="inherit" onClick={eventPage}>
+              Events
+            </Button>
+            <Button color="inherit" onClick={showPage}>
+              Shows
+            </Button>
           </div>
 
           {/* Add more navigation links as needed */}

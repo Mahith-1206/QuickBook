@@ -28,6 +28,7 @@ export default function SeatBookingTest(props) {
   let clicked = false;
 
   function buttonanimation(e2) {
+    navigate("/payment");
     if (clicked === false && count !== 0) {
       clicked = true;
       e2.target.innerText = "";

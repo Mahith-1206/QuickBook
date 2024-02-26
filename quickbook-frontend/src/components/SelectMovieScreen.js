@@ -17,8 +17,26 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Image1 from "../images/movies/1.avif";
 import { useNavigate } from "react-router-dom";
-
+import YouTube from "react-youtube";
 function SelectMovieScreen() {
+  const videoOptions = {
+    height: "390",
+    width: "640",
+    playerVars: {
+      autoplay: 1, // Play the video automatically
+      // Other player parameters can go here
+    },
+  };
+
+  // Handle YouTube player ready event (optional)
+  const onPlayerReady = (event) => {
+    // For example, you could play the video automatically:
+    // event.target.playVideo();
+    // Or adjust the volume, etc.
+  };
+
+  const videoId = "dQw4w9WgXcQ";
+
   const navigate = useNavigate();
 
   const [selectedTheater, setSelectedTheater] = useState("");
@@ -94,7 +112,7 @@ function SelectMovieScreen() {
                     </TableCell>
                     <TableCell>
                       {theatreWithTime.timings.map((timing) => (
-                        <Button>{timing}</Button>
+                        <Button onClick={handleBookTicket}>{timing}</Button>
                       ))}
                     </TableCell>
                   </TableRow>
@@ -112,6 +130,18 @@ function SelectMovieScreen() {
           </Button>
         </Box>
       </Box>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <YouTube
+          videoId={videoId}
+          opts={videoOptions}
+          onReady={onPlayerReady}
+        />
+      </div>
     </div>
   );
 }

@@ -45,6 +45,10 @@ const Header = () => {
     setIsLoggedIn(!isLoggedIn);
   };
 
+  const userProfile = () => {
+    navigate("/user");
+  };
+
   // const [name, setName] = useState("");
   // console.log(name);
 
@@ -146,7 +150,9 @@ const Header = () => {
             )}
           </>
         ) : (
-          <h3> Welcome, Mahith</h3>
+          <Button onClick={userProfile} color="inherit" sx={{ ml: 2 }}>
+            Welcome, Mahith
+          </Button>
         )}
       </Toolbar>
     </AppBar>

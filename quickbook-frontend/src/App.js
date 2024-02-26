@@ -9,6 +9,7 @@ import SeatBooking from "./components/SeatBooking";
 import { Routes, Route } from "react-router-dom";
 import SeatBookingTest from "./components/SeatBookingTest";
 import PaymentScreen from "./components/PaymentScreen";
+import Movies from "./components/Movies";
 const theme = createTheme({
   palette: {
     primary: {
@@ -73,6 +74,17 @@ function App() {
             <ThemeProvider theme={theme}>
               <Header />
               <Navigation /> <MovieCarousal />
+            </ThemeProvider>
+          </>
+        }
+      />
+      <Route
+        path="/movies"
+        element={
+          <>
+            <ThemeProvider theme={theme}>
+              <Header />
+              <Navigation /> <Movies />
             </ThemeProvider>
           </>
         }

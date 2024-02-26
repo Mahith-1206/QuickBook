@@ -7,6 +7,10 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  List,
+  ListItem,
+  ListItemText,
+  Grid,
   Paper,
 } from "@mui/material";
 import Table from "@mui/material/Table";
@@ -15,7 +19,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Image1 from "../images/movies/1.avif";
+import Image1 from "../images/movies/15.jpg";
 import { useNavigate } from "react-router-dom";
 import YouTube from "react-youtube";
 function SelectMovieScreen() {
@@ -36,6 +40,21 @@ function SelectMovieScreen() {
   };
 
   const videoId = "dQw4w9WgXcQ";
+
+  const movieData = {
+    cast: [
+      { name: "Timothee Chalamet", role: "Paul Atreides" },
+      { name: "Austin Butler", role: "Feyd" },
+      { name: "Zendaya", role: "Chani" },
+      // Add more cast members here
+    ],
+    crew: [
+      { name: "Dennis Villeneueve", role: "Director" },
+      { name: "Jon Spalhts", role: "Screenplay" },
+      { name: "Cale Boyter", role: "Producer" },
+      // Add more crew members here
+    ],
+  };
 
   const navigate = useNavigate();
 
@@ -81,7 +100,7 @@ function SelectMovieScreen() {
 
   return (
     <div style={{ marginTop: "25px" }}>
-      <Box display="flex" p={2}>
+      <Box display="flex" p={1}>
         <Box flexShrink={0}>
           <img
             src={Image1}
@@ -90,15 +109,30 @@ function SelectMovieScreen() {
           />
         </Box>
         <Box flexGrow={1} ml={2}>
-          <Typography variant="h5">Ram Setu</Typography>
-          <Typography paragraph>Description of the movie...</Typography>
+          <Typography variant="h4" style={{ fontWeight: "bold" }}>
+            Dune: Part 2
+          </Typography>
+          <Typography paragraph style={{ marginTop: "10px" }}>
+            Paul stays behind to continue fighting against the Harkonnens,
+            infuriated by her lies and unethical harnessing of the religious
+            zealots on Arrakis. The Baron demotes Rabban and makes Feyd-Rautha
+            ruler of Arrakis. Paul reunites with Gurney Halleck, who had joined
+            the smugglers after the Atreides' downfall.
+          </Typography>
 
           <TableContainer component={Paper}>
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Theatre</TableCell>
-                  <TableCell align="centre">Show Timings</TableCell>
+                  <TableCell style={{ fontWeight: "bold", fontSize: "25px" }}>
+                    Theatre
+                  </TableCell>
+                  <TableCell
+                    align="centre"
+                    style={{ fontWeight: "bold", fontSize: "25px" }}
+                  >
+                    Show Timings
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -120,28 +154,60 @@ function SelectMovieScreen() {
               </TableBody>
             </Table>
           </TableContainer>
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ mt: 2 }}
-            onClick={handleBookTicket}
-          >
-            Book Now
-          </Button>
         </Box>
       </Box>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <YouTube
-          videoId={videoId}
-          opts={videoOptions}
-          onReady={onPlayerReady}
-        />
-      </div>
+      <Box display={"flex"}>
+        <Box
+          p={1}
+          style={{
+            display: "flex",
+          }}
+        >
+          <YouTube
+            videoId={videoId}
+            opts={videoOptions}
+            onReady={onPlayerReady}
+          />
+        </Box>
+        <Box flexGrow={1} ml={3}>
+          <Grid container spacing={2} sx={{ padding: "20px" }}>
+            <Grid item xs={12} sm={6}>
+              <Paper elevation={3} sx={{ padding: "20px" }}>
+                <Typography variant="h6" gutterBottom>
+                  Cast
+                </Typography>
+                <List>
+                  {movieData.cast.map((member, index) => (
+                    <ListItem key={index} divider>
+                      <ListItemText
+                        primary={member.name}
+                        secondary={member.role}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Paper elevation={3} sx={{ padding: "20px" }}>
+                <Typography variant="h6" gutterBottom>
+                  Crew
+                </Typography>
+                <List>
+                  {movieData.crew.map((member, index) => (
+                    <ListItem key={index} divider>
+                      <ListItemText
+                        primary={member.name}
+                        secondary={member.role}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
     </div>
   );
 }

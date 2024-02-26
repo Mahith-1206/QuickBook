@@ -4,7 +4,20 @@ import { useState, useRef } from "react";
 import Image1 from "../images/Screen/screen.png";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
-
+import {
+  Box,
+  Button,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  List,
+  ListItem,
+  ListItemText,
+  Grid,
+  Paper,
+} from "@mui/material";
 export default function SeatBookingTest(props) {
   const ref = useRef(null);
   console.log(ref);
@@ -35,9 +48,6 @@ export default function SeatBookingTest(props) {
       tl.to("#button", { width: "50px", duration: 0.5 });
       tl.to(ref, { y: "0%", duration: 0.5 });
       console.log(e2);
-      setTimeout(() => {
-        navigate("/");
-      }, 3000);
     }
     let data = {
       MovieName: props.name,
@@ -57,15 +67,11 @@ export default function SeatBookingTest(props) {
   }
 
   return (
-    <body1>
+    <body1 className="body1">
       <ul className="showcase">
         <li>
           <div className="seat selected"></div>
           <small>Selected</small>
-        </li>
-        <li>
-          <div className="seat occupied"></div>
-          <small>Occupied</small>
         </li>
       </ul>
 

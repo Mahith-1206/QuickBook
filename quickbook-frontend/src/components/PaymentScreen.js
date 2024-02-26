@@ -17,7 +17,7 @@ function PaymentScreen() {
   const navigate = useNavigate();
 
   const [paymentDetails, setPaymentDetails] = useState({
-    movieName: "Interstellar",
+    movieName: "Dune: Part two",
     showTime: "7:00 PM",
     tickets: 2,
     pricePerTicket: 12.99,
@@ -55,7 +55,13 @@ function PaymentScreen() {
   };
 
   return (
-    <Box justifyContent="center" alignItems="center" minHeight="50vh">
+    <Box
+      justifyContent="center"
+      alignItems="center"
+      minHeight="50vh"
+      display="flex"
+      marginTop="30px"
+    >
       <Paper elevation={3} style={{ padding: "20px", maxWidth: "600px" }}>
         <Typography variant="h5" component="h2" gutterBottom>
           Complete Your Payment
@@ -148,10 +154,26 @@ function PaymentScreen() {
       </Paper>
 
       <Dialog open={isBookingConfirmed}>
-        <DialogTitle>Booking Confirmed</DialogTitle>
+        <DialogTitle style={{ fontWeight: "bold", marginLeft: "50px" }}>
+          Booking Confirmed!
+        </DialogTitle>
         <DialogContent>
           Your ticket will be sent to your email shortly
-          <div>{<Button onClick={goHome}> Okay! </Button>}</div>
+          <div>
+            {
+              <Button
+                onClick={goHome}
+                style={{
+                  fontWeight: "bold",
+                  marginLeft: "120px",
+                  marginTop: "20px",
+                }}
+              >
+                {" "}
+                Okay{" "}
+              </Button>
+            }
+          </div>
         </DialogContent>
       </Dialog>
     </Box>

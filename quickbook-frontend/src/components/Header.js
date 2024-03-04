@@ -3,6 +3,7 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
+import routes from "../routes";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -23,6 +24,8 @@ import Image6 from "../images/movies/6.avif";
 import Image7 from "../images/movies/7.avif";
 import Image8 from "../images/movies/8.avif";
 import Image9 from "../images/movies/9.avif";
+import { Dropdown } from "antd";
+import NavMobile from "./nav-mobile";
 
 const Header = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -155,6 +158,23 @@ const Header = () => {
           </Button>
         )}
       </Toolbar>
+      <ul className="hidden lg:flex lg:items-center gap-5 text-sm">
+      {/* {routes.map((route) => {
+        const { Icon, href, title } = route;
+        return (
+          <li>
+            <a
+              href={href}
+              className="flex items-center gap-1 hover:text-neutral-400 transition-all"
+            >
+              <Icon />
+              {title}
+            </a>
+          </li>
+        );
+      })} */}
+      <NavMobile></NavMobile>
+    </ul>
     </AppBar>
   );
 };

@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 function Navigation() {
   const navigate = useNavigate();
-
+  console.log("test");
   const moviePage = () => {
     navigate("/movies");
   };

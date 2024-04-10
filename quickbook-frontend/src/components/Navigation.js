@@ -13,7 +13,7 @@ function Navigation() {
   const moviePage = () => {
     navigate("/movies");
   };
-  console.log("test2");
+
   const eventPage = () => {
     navigate("/event");
   };

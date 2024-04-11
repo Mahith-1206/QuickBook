@@ -1,5 +1,8 @@
 import React from "react";
 
-function Event() {}
+function Event() {
+    console.log("hello1");
+    console.log("hello1");
+}
 
 export default Event;

@@ -25,6 +25,7 @@ import Image8 from "../images/movies/8.avif";
 import Image9 from "../images/movies/9.avif";
 
 const Header = () => {
+  console.log("hello2");
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 

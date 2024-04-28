@@ -67,10 +67,10 @@ const deleteUserController = async (req, res) => {
   }
 };
 
-export default {
-  createUserController,
+export {
   getUserController,
   getUsersController,
   updateUserController,
   deleteUserController,
+  createUserController,
 };

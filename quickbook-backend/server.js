@@ -1,5 +1,3 @@
-import redisClient from "./config/redis.js";
-import messageQueue from "./config/bull.js";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";

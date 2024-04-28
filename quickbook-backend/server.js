@@ -1,15 +1,21 @@
-const express = require("express");
+import redisClient from "./config/redis.js";
+import messageQueue from "./config/bull.js";
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import emailRoute from "./routes/emailRoute.js";
+import userRoute from "./routes/userRoute.js";
+
 const app = express();
-const PORT = 8090;
-const cors = require("cors");
-require("dotenv").config();
-const dbConfig = require("./config/dbConfig");
-const userRoute = require("./routes/userRoute");
+const PORT = process.env.PORT || 3000;
 
+app.use(bodyParser.json());
 app.use(cors());
-app.use(express.json());
-app.use("/",userRoute);
 
-app.listen(PORT, (req,res)=>{
-    console.log(`Connection established at ${PORT}`);
-})
+// Define your routes here
+app.use("/emails", emailRoute);
+app.use("/users", userRoute);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getVenuesByEventId } from "../models/eventVenueModel.js";
 
 const getMovieController = async (req, res) => {
   try {
@@ -58,4 +59,21 @@ const getMovieController = async (req, res) => {
   }
 };
 
-export { getMovieController };
+const getMovieTimingsController = async (req, res) => {
+  try {
+    const movieId = req.params.id;
+    const data = await getVenuesByEventId(movieId);
+    if (data) {
+      res.status(200).json({ success: true, data });
+    } else {
+      res.status(404).json({ success: false, error: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error getting movie timings:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Could not fetch movie timings" });
+  }
+};
+
+export { getMovieController, getMovieTimingsController };

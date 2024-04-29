@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -22,22 +22,27 @@ import TableRow from "@mui/material/TableRow";
 import Image1 from "../images/movies/15.jpg";
 import { useNavigate } from "react-router-dom";
 import YouTube from "react-youtube";
+import axios from "axios";
+
 function SelectMovieScreen() {
+  const navigate = useNavigate();
+
+  const [movieInfo, setMovieInfo] = useState(null);
+  const [selectedTheater, setSelectedTheater] = useState("");
+  const [selectedShowtime, setSelectedShowtime] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  //const movieId = "438631";
+
   const videoOptions = {
     height: "390",
     width: "640",
     playerVars: {
-      autoplay: 1, // Play the video automatically
-      // Other player parameters can go here
+      autoplay: 1,
     },
   };
-
-  // Handle YouTube player ready event (optional)
-  const onPlayerReady = (event) => {
-    // For example, you could play the video automatically:
-    // event.target.playVideo();
-    // Or adjust the volume, etc.
-  };
+  const onPlayerReady = (event) => {};
 
   const videoId = "dQw4w9WgXcQ";
 
@@ -56,10 +61,38 @@ function SelectMovieScreen() {
     ],
   };
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchMovieInfo = async () => {
+      const movieId = "438631";
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/movie/" + movieId
+        );
+        console.log("Movie data d " + response.data.movie.id);
+        setMovieInfo(response.data.movie);
+        setLoading(false);
+      } catch (error) {
+        console.log("Movie data d " + error.message);
+        setError(error.message);
+      }
+    };
 
-  const [selectedTheater, setSelectedTheater] = useState("");
-  const [selectedShowtime, setSelectedShowtime] = useState("");
+    // const fetchShowTimings = async () => {
+    //   try {
+    //     const response = await fetch("showTimingsAPIEndpoint");
+    //     if (!response.ok) {
+    //       throw new Error("Failed to fetch show timings");
+    //     }
+    //     const data = await response.json();
+    //     setShowTimings(data);
+    //   } catch (error) {
+    //     setError(error.message);
+    //   }
+    // };
+
+    fetchMovieInfo();
+    // fetchShowTimings();
+  }, []);
 
   const theaters = [
     { id: 1, name: "Theater A", showtimes: ["10:00 AM", "1:00 PM", "4:00 PM"] },
@@ -76,11 +109,6 @@ function SelectMovieScreen() {
     setSelectedShowtime(event.target.value);
   };
 
-  //   const rows = [
-  //     createData("AMC Empire 25", "10:30", 6.0, 24, 4.0),
-  //     createData("AMC 33", "12:00", 9.0, 37, 4.3),
-  //   ];
-
   const theatreList = ["AMC Empire 25", "AMC 33", "Regal Square Secaucus"];
   const showTimings = ["09:00", "12:00", "15:00", "18:00"];
 
@@ -94,120 +122,162 @@ function SelectMovieScreen() {
     return { name, timings };
   }
 
+  const theatres = [
+    {
+      name: "Theatre A",
+      timings: ["10:00 AM", "2:00 PM", "6:00 PM"],
+    },
+    {
+      name: "Theatre B",
+      timings: ["11:00 AM", "3:00 PM", "7:00 PM"],
+    },
+    {
+      name: "Theatre C",
+      timings: ["12:00 PM", "4:00 PM", "8:00 PM"],
+    },
+  ];
+
   const handleBookTicket = () => {
     navigate("/bookSeat");
   };
 
-  return (
-    <div style={{ marginTop: "25px" }}>
-      <Box display="flex" p={1}>
-        <Box flexShrink={0}>
-          <img
-            src={Image1}
-            alt="Movie Poster"
-            style={{ width: 300, height: 450 }}
-          />
-        </Box>
-        <Box flexGrow={1} ml={2}>
-          <Typography variant="h4" style={{ fontWeight: "bold" }}>
-            Dune: Part 2
-          </Typography>
-          <Typography paragraph style={{ marginTop: "10px" }}>
-            Paul stays behind to continue fighting against the Harkonnens,
-            infuriated by her lies and unethical harnessing of the religious
-            zealots on Arrakis. The Baron demotes Rabban and makes Feyd-Rautha
-            ruler of Arrakis. Paul reunites with Gurney Halleck, who had joined
-            the smugglers after the Atreides' downfall.
-          </Typography>
+  // Function to book a movie
+  const bookMovie = (theatreName, timing) => {
+    // Replace this with your booking API call
+    console.log(`Booking movie at ${theatreName} for ${timing}`);
+  };
 
-          <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell style={{ fontWeight: "bold", fontSize: "25px" }}>
-                    Theatre
-                  </TableCell>
-                  <TableCell
-                    align="centre"
-                    style={{ fontWeight: "bold", fontSize: "25px" }}
-                  >
-                    Show Timings
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {theatresWithTime.map((theatreWithTime) => (
-                  <TableRow
-                    key={theatreWithTime.name}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {theatreWithTime.name}
-                    </TableCell>
-                    <TableCell>
-                      {theatreWithTime.timings.map((timing) => (
-                        <Button onClick={handleBookTicket}>{timing}</Button>
+  return (
+    <div>
+      {loading ? (
+        <p>Loading....</p>
+      ) : (
+        <div style={{ marginTop: "25px" }}>
+          <Box display="flex" p={1}>
+            <Box flexShrink={0}>
+              <img
+                src={`https://image.tmdb.org/t/p/original/${movieInfo.poster_path}`}
+                alt="Movie Poster"
+                style={{ width: 300, height: 450 }}
+              />
+            </Box>
+            <Box flexGrow={1} ml={2}>
+              <Typography variant="h4" style={{ fontWeight: "bold" }}>
+                {movieInfo.original_title}
+              </Typography>
+              <Typography paragraph style={{ marginTop: "10px" }}>
+                {movieInfo.overview}
+              </Typography>
+
+              <TableContainer component={Paper}>
+                <Table aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        style={{ fontWeight: "bold", fontSize: "25px" }}
+                      >
+                        Theatre
+                      </TableCell>
+                      <TableCell
+                        align="centre"
+                        style={{ fontWeight: "bold", fontSize: "25px" }}
+                      >
+                        Show Timings
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {theatres.map((theatre) => (
+                      <TableRow key={theatre.name}>
+                        <TableCell>{theatre.name}</TableCell>
+                        <TableCell>
+                          {theatre.timings.map((timing) => (
+                            <Button
+                              key={timing}
+                              onClick={() => bookMovie(theatre.name, timing)}
+                            >
+                              {timing}
+                            </Button>
+                          ))}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {/* {theatresWithTime.map((theatreWithTime) => (
+                      <TableRow
+                        key={theatreWithTime.name}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell component="th" scope="row">
+                          {theatreWithTime.name}
+                        </TableCell>
+                        <TableCell>
+                          {theatreWithTime.timings.map((timing) => (
+                            <Button onClick={handleBookTicket}>{timing}</Button>
+                          ))}
+                        </TableCell>
+                      </TableRow>
+                    ))} */}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+          </Box>
+          <Box display={"flex"}>
+            <Box
+              p={1}
+              style={{
+                display: "flex",
+              }}
+            >
+              <YouTube
+                videoId={movieInfo.trailerKey}
+                opts={videoOptions}
+                onReady={onPlayerReady}
+              />
+            </Box>
+            <Box flexGrow={1} ml={3}>
+              <Grid container spacing={2} sx={{ padding: "20px" }}>
+                <Grid item xs={12} sm={6}>
+                  <Paper elevation={3} sx={{ padding: "20px" }}>
+                    <Typography variant="h6" gutterBottom>
+                      Cast
+                    </Typography>
+                    <List>
+                      {movieInfo.cast.map((member, index) => (
+                        <ListItem key={index} divider>
+                          <ListItemText
+                            primary={member.name}
+                            secondary={member.character}
+                          />
+                        </ListItem>
                       ))}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      </Box>
-      <Box display={"flex"}>
-        <Box
-          p={1}
-          style={{
-            display: "flex",
-          }}
-        >
-          <YouTube
-            videoId={videoId}
-            opts={videoOptions}
-            onReady={onPlayerReady}
-          />
-        </Box>
-        <Box flexGrow={1} ml={3}>
-          <Grid container spacing={2} sx={{ padding: "20px" }}>
-            <Grid item xs={12} sm={6}>
-              <Paper elevation={3} sx={{ padding: "20px" }}>
-                <Typography variant="h6" gutterBottom>
-                  Cast
-                </Typography>
-                <List>
-                  {movieData.cast.map((member, index) => (
-                    <ListItem key={index} divider>
-                      <ListItemText
-                        primary={member.name}
-                        secondary={member.role}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Paper elevation={3} sx={{ padding: "20px" }}>
-                <Typography variant="h6" gutterBottom>
-                  Crew
-                </Typography>
-                <List>
-                  {movieData.crew.map((member, index) => (
-                    <ListItem key={index} divider>
-                      <ListItemText
-                        primary={member.name}
-                        secondary={member.role}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </Paper>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
+                    </List>
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Paper elevation={3} sx={{ padding: "20px" }}>
+                    <Typography variant="h6" gutterBottom>
+                      Crew
+                    </Typography>
+                    <List>
+                      {movieInfo.crew.map((member, index) => (
+                        <ListItem key={index} divider>
+                          <ListItemText
+                            primary={member.name}
+                            secondary={member.job}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Paper>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </div>
+      )}
     </div>
   );
 }

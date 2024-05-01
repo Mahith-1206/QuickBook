@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getVenuesByEventId } from "../models/eventVenueModel.js";
+import db from "../config/dbConfig.js";
 
 const getMovieController = async (req, res) => {
   try {
@@ -62,9 +63,9 @@ const getMovieController = async (req, res) => {
 const getMovieTimingsController = async (req, res) => {
   try {
     const movieId = req.params.id;
-    const data = await getVenuesByEventId(movieId);
-    if (data) {
-      res.status(200).json({ success: true, data });
+    const theatres = await getVenuesByEventId(movieId);
+    if (theatres) {
+      res.status(200).json({ success: true, theatres });
     } else {
       res.status(404).json({ success: false, error: "User not found" });
     }
@@ -76,4 +77,55 @@ const getMovieTimingsController = async (req, res) => {
   }
 };
 
-export { getMovieController, getMovieTimingsController };
+const searchMovieController = async (req, res) => {
+  const query = req.query.query;
+
+  if (!query) {
+    return res.status(400).json({ error: "Query parameter is required" });
+  }
+
+  const moviesCollection = db.collection("movie_names");
+  // Perform pattern matching using MongoDB's $regex operator
+  // const regexQuery = { name: { $regex: `^${query}`} };
+  const regexQuery = { name: { $regex: `^${query}` } };
+  console.log("query: ", query);
+  console.log("regex: ", regexQuery);
+
+  // db.collection("movie_names")
+  //   .find({
+  //     regexQuery,
+  //   })
+  //   .toArray()
+  //   .then((restaurants) => {
+  //     if (restaurants.length === 0) {
+  //       return res
+  //         .status(404)
+  //         .send("No restaurants found for the given borough and cuisine");
+  //     }
+  //     res.send(restaurants);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error fetching restaurants:", error);
+  //     res.status(500).send("An unexpected error occurred.");
+  //   });
+
+  // moviesCollection.find(regexQuery).toArray((err, result) => {
+  //   if (err) {
+  //     console.error("Error fetching search results:", err);
+  //     return res.status(500).json({ error: "Internal server error" });
+  //   }
+  //   res.json(result.map((movie) => movie.name));
+  // });
+
+  const docs = moviesCollection.find({
+    name: {
+      $regex: query,
+      $options: "i",
+    },
+  });
+  const data = await docs.toArray();
+  console.log("Doc Len", data.length);
+  res.status(200).json(data);
+};
+
+export { getMovieController, getMovieTimingsController, searchMovieController };

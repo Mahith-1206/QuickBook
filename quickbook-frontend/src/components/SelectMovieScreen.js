@@ -26,12 +26,11 @@ import axios from "axios";
 
 function SelectMovieScreen() {
   const navigate = useNavigate();
-
   const [movieInfo, setMovieInfo] = useState(null);
-  const [selectedTheater, setSelectedTheater] = useState("");
-  const [selectedShowtime, setSelectedShowtime] = useState("");
+  const [showTimings, setShowTimings] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(true);
 
   //const movieId = "438631";
 
@@ -43,27 +42,12 @@ function SelectMovieScreen() {
     },
   };
   const onPlayerReady = (event) => {};
-
-  const videoId = "dQw4w9WgXcQ";
-
-  const movieData = {
-    cast: [
-      { name: "Timothee Chalamet", role: "Paul Atreides" },
-      { name: "Austin Butler", role: "Feyd" },
-      { name: "Zendaya", role: "Chani" },
-      // Add more cast members here
-    ],
-    crew: [
-      { name: "Dennis Villeneueve", role: "Director" },
-      { name: "Jon Spalhts", role: "Screenplay" },
-      { name: "Cale Boyter", role: "Producer" },
-      // Add more crew members here
-    ],
-  };
+  const movieName = "Dune";
 
   useEffect(() => {
     const fetchMovieInfo = async () => {
       const movieId = "438631";
+
       try {
         const response = await axios.get(
           "http://localhost:3000/movie/" + movieId
@@ -77,74 +61,36 @@ function SelectMovieScreen() {
       }
     };
 
-    // const fetchShowTimings = async () => {
-    //   try {
-    //     const response = await fetch("showTimingsAPIEndpoint");
-    //     if (!response.ok) {
-    //       throw new Error("Failed to fetch show timings");
-    //     }
-    //     const data = await response.json();
-    //     setShowTimings(data);
-    //   } catch (error) {
-    //     setError(error.message);
-    //   }
-    // };
-
+    const fetchShowTimings = async () => {
+      const movieId = "1";
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/movie/timings/" + movieId
+        );
+        console.log("Timing " + response.data.theatres[0].EventID);
+        console.log(
+          "Timing actual " + response.data.theatres[0].EventTimings[0]
+        );
+        setShowTimings(response.data.theatres);
+        setLoading2(false);
+      } catch (error) {
+        console.log("Error.." + error.message);
+        setError(error.message);
+      }
+    };
+    fetchShowTimings();
     fetchMovieInfo();
-    // fetchShowTimings();
   }, []);
-
-  const theaters = [
-    { id: 1, name: "Theater A", showtimes: ["10:00 AM", "1:00 PM", "4:00 PM"] },
-    { id: 2, name: "Theater B", showtimes: ["11:00 AM", "2:00 PM", "5:00 PM"] },
-    { id: 3, name: "Theater C", showtimes: ["12:00 PM", "3:00 PM", "6:00 PM"] },
-  ];
-
-  const handleTheaterChange = (event) => {
-    setSelectedTheater(event.target.value);
-    setSelectedShowtime(""); // Reset showtime when theater changes
-  };
-
-  const handleShowtimeChange = (event) => {
-    setSelectedShowtime(event.target.value);
-  };
-
-  const theatreList = ["AMC Empire 25", "AMC 33", "Regal Square Secaucus"];
-  const showTimings = ["09:00", "12:00", "15:00", "18:00"];
-
-  const theatresWithTime = [
-    createData("AMC Empire 25", ["09:00", "12:00", "15:00", "18:00"]),
-    createData("AMC 33", ["09:00", "12:00", "15:00", "18:00"]),
-    createData("Regal", ["09:00", "12:00", "15:00", "18:00"]),
-  ];
-
-  function createData(name, timings) {
-    return { name, timings };
-  }
-
-  const theatres = [
-    {
-      name: "Theatre A",
-      timings: ["10:00 AM", "2:00 PM", "6:00 PM"],
-    },
-    {
-      name: "Theatre B",
-      timings: ["11:00 AM", "3:00 PM", "7:00 PM"],
-    },
-    {
-      name: "Theatre C",
-      timings: ["12:00 PM", "4:00 PM", "8:00 PM"],
-    },
-  ];
 
   const handleBookTicket = () => {
     navigate("/bookSeat");
   };
 
   // Function to book a movie
-  const bookMovie = (theatreName, timing) => {
+  const bookMovie = (id, theatreName, timing) => {
     // Replace this with your booking API call
     console.log(`Booking movie at ${theatreName} for ${timing}`);
+    navigate("/bookSeat", { state: { id, theatreName, timing, movieName } });
   };
 
   return (
@@ -168,60 +114,52 @@ function SelectMovieScreen() {
               <Typography paragraph style={{ marginTop: "10px" }}>
                 {movieInfo.overview}
               </Typography>
-
-              <TableContainer component={Paper}>
-                <Table aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell
-                        style={{ fontWeight: "bold", fontSize: "25px" }}
-                      >
-                        Theatre
-                      </TableCell>
-                      <TableCell
-                        align="centre"
-                        style={{ fontWeight: "bold", fontSize: "25px" }}
-                      >
-                        Show Timings
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {theatres.map((theatre) => (
-                      <TableRow key={theatre.name}>
-                        <TableCell>{theatre.name}</TableCell>
-                        <TableCell>
-                          {theatre.timings.map((timing) => (
-                            <Button
-                              key={timing}
-                              onClick={() => bookMovie(theatre.name, timing)}
-                            >
-                              {timing}
-                            </Button>
-                          ))}
+              {loading2 ? (
+                <p>Loading....</p>
+              ) : (
+                <TableContainer component={Paper}>
+                  <Table aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell
+                          style={{ fontWeight: "bold", fontSize: "25px" }}
+                        >
+                          Theatre
+                        </TableCell>
+                        <TableCell
+                          align="centre"
+                          style={{ fontWeight: "bold", fontSize: "25px" }}
+                        >
+                          Show Timings
                         </TableCell>
                       </TableRow>
-                    ))}
-                    {/* {theatresWithTime.map((theatreWithTime) => (
-                      <TableRow
-                        key={theatreWithTime.name}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {theatreWithTime.name}
-                        </TableCell>
-                        <TableCell>
-                          {theatreWithTime.timings.map((timing) => (
-                            <Button onClick={handleBookTicket}>{timing}</Button>
-                          ))}
-                        </TableCell>
-                      </TableRow>
-                    ))} */}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {showTimings.map((theatre) => (
+                        <TableRow key={theatre.venue_name}>
+                          <TableCell>{theatre.venue_name}</TableCell>
+                          <TableCell>
+                            {theatre.EventTimings.map((timing) => (
+                              <Button
+                                key={timing}
+                                onClick={() =>
+                                  bookMovie(
+                                    theatre.venue_id,
+                                    theatre.venue_name,
+                                    timing
+                                  )
+                                }
+                              >
+                                {timing}
+                              </Button>
+                            ))}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
             </Box>
           </Box>
           <Box display={"flex"}>

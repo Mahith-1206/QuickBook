@@ -135,7 +135,7 @@ const Header = () => {
         </IconButton>
         {/* This Box component serves as a spacer */}
         <Box flex={1}>
-          <SearchAutocomplete movies={movies} />
+          <SearchAutocomplete />
         </Box>
         {!isLoggedIn ? (
           <>

@@ -1,41 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Autocomplete, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import axios from "axios";
 
-const SearchAutocomplete = ({ movies }) => {
+const SearchAutocomplete = () => {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+
+  const resultss = [];
+
+  useEffect(() => {
+    if (query.trim() !== "") {
+      axios
+        .get(`http://localhost:3000/movie/search?query=${query}`)
+        .then((response) => {
+          setResults(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching search results:", error);
+        });
+    } else {
+      setResults([]);
+    }
+  }, [query]);
+
   // const [name, setName] = useState("");
   // console.log(name);
   return (
-    <Autocomplete
-      id="movie-search"
-      options={movies}
-      getOptionLabel={(movie) => movie.title}
-      renderInput={(params) => (
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Search for movies/events/shows..."
-          InputProps={{
-            sx: {
-              "& .MuiInputBase-input::placeholder": {
-                color: "#ffffff",
-                opacity: 0.8, // Adjust the opacity as needed
-              },
-              background: "#1f1f1f", // Change to your desired background color
-              color: "white",
-              cursor: "text", // Set cursor color to white
-            },
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon style={{ color: "white" }} />
-              </InputAdornment>
-            ),
-          }}
-          {...params}
-          // label="Search Movies"
-        />
-      )}
-    />
+    <div>
+      <input
+        type="text"
+        style={{
+          marginLeft: "20px",
+          marginTop: "20px",
+          width: "900px",
+          height: "50px",
+          borderRadius: "5px",
+          fontStyle: "italic",
+          fontSize: "17px",
+        }}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="  Search for a movie..."
+      />
+      <ul>
+        {results.map((movie, index) => (
+          <li key={index}>{movie.name}</li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

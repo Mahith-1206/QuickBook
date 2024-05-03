@@ -9,12 +9,25 @@ import {
   DialogTitle,
   DialogContent,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 
 function PaymentScreen() {
   const [redeem, setRedeem] = useState(false);
   const [isBookingConfirmed, setIsBookingConfirmed] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const {
+    id,
+    theatreName,
+    timing,
+    totalPrice,
+    totalSeats,
+    movieName,
+    positions,
+  } = location.state;
 
   const [paymentDetails, setPaymentDetails] = useState({
     movieName: "Dune: Part two",
@@ -24,16 +37,6 @@ function PaymentScreen() {
     totalPrice: 25.98,
     theatre: "AMC Empire 25",
   });
-
-  // Mock data for demonstration
-  //   const paymentDetails = {
-  //     movieName: "Interstellar",
-  //     showTime: "7:00 PM",
-  //     tickets: 2,
-  //     pricePerTicket: 12.99,
-  //     totalPrice: 25.98,
-  //     theatre: "AMC Empire 25",
-  //   };
 
   const redeemPoints = () => {
     if (!redeem && paymentDetails.totalPrice > 0) {
@@ -45,9 +48,27 @@ function PaymentScreen() {
     }
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     console.log("Processing payment...");
-    setIsBookingConfirmed(true);
+
+    console.log("venue id and name", id, theatreName);
+    try {
+      console.log("positions, ", positions);
+      const response = await axios.put(
+        "http://localhost:3000/venue/book-seats",
+        {
+          venueId: id,
+          seats: positions,
+        }
+      );
+      console.log("response success? ", response.data.success);
+      if (response.data.success === true) {
+        setIsBookingConfirmed(true);
+      }
+    } catch (error) {
+      console.log("Movie data d " + error.message);
+      setError(error.message);
+    }
   };
 
   const goHome = () => {
@@ -71,26 +92,26 @@ function PaymentScreen() {
             <strong>Movie:</strong>
           </Grid>
           <Grid item xs={6}>
-            {paymentDetails.movieName}
+            {movieName}
           </Grid>
 
           <Grid item xs={6}>
             <strong>Show Time:</strong>
           </Grid>
           <Grid item xs={6}>
-            {paymentDetails.showTime}
+            {timing}
           </Grid>
           <Grid item xs={6}>
             <strong>Theatre:</strong>
           </Grid>
           <Grid item xs={6}>
-            {paymentDetails.theatre}
+            {theatreName}
           </Grid>
           <Grid item xs={6}>
             <strong>Tickets:</strong>
           </Grid>
           <Grid item xs={6}>
-            {paymentDetails.tickets}
+            {totalSeats}
           </Grid>
 
           <Grid item xs={6}>

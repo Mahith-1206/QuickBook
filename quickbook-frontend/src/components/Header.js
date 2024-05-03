@@ -134,37 +134,8 @@ const Header = () => {
           {/* This icon serves as the app logo */}
         </IconButton>
         {/* This Box component serves as a spacer */}
-        {/* <Box flex={1}>
-          <SearchAutocomplete movies={movies} />
-        </Box> */}
-
         <Box flex={1}>
-          <TextField
-          // onChange={(e) => {
-          //   setName(e.target.value);
-          // }}
-            style={{ color: "white" }}
-            fullWidth
-            variant="outlined"
-            placeholder="Search for movies/events/shows..."
-            InputProps={{
-              sx: {
-                "& .MuiInputBase-input::placeholder": {
-                  // Targeting the placeholder style
-                  color: "white", // Change to your desired placeholder color
-                  opacity: 1, // Optional: adjust the opacity of the placeholder text
-                },
-                background: "#353232",
-                color: "white",
-              },
-
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon style={{ color: "white" }} />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <SearchAutocomplete />
         </Box>
         
         {!isLoggedIn ? (

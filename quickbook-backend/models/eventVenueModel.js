@@ -12,4 +12,42 @@ const getVenuesByEventId = async (eventId) => {
   }
 };
 
-export { getVenuesByEventId };
+const getAllMovieIds = async () => {
+  try {
+    const query =
+      "select EventID, Genre, Language FROM Events where EventType = 'Movie'";
+    const [rows] = await pool.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error("Error while fetching venues: ${error.message}");
+  }
+};
+
+const getAllTrendingMovieIds = async () => {
+  try {
+    const query =
+      "select EventID, Genre, Language from Events where EventType = 'Movie' and Trending = 1";
+    const [rows] = await pool.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error("Error while fetching venues: ${error.message}");
+  }
+};
+
+const getAllPromotedMovieIds = async () => {
+  try {
+    const query =
+      "select EventID,Genre, Language from Events where EventType = 'Movie' and Promoted = 1";
+    const [rows] = await pool.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error(`Error while fetching venues: ${error.message}`);
+  }
+};
+
+export {
+  getVenuesByEventId,
+  getAllMovieIds,
+  getAllTrendingMovieIds,
+  getAllPromotedMovieIds,
+};

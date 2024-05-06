@@ -1,183 +1,36 @@
-import React, { useState } from "react";
-import Image1 from "../images/movies/1.avif";
-import Image2 from "../images/movies/2.avif";
-import Image3 from "../images/movies/3.avif";
-import Image4 from "../images/movies/4.avif";
-import Image5 from "../images/movies/5.avif";
-import Image6 from "../images/movies/6.avif";
-import Image7 from "../images/movies/7.avif";
-import Image8 from "../images/movies/8.avif";
-import Image9 from "../images/movies/9.avif";
-import Image10 from "../images/movies/10.avif";
-import Image11 from "../images/movies/11.jpg";
-import Image12 from "../images/movies/12.jpg";
-import Image13 from "../images/movies/13.jpg";
-import Image14 from "../images/movies/14.jpg";
-import Image15 from "../images/movies/15.jpg";
-import Image16 from "../images/movies/16.jpg";
-import Image17 from "../images/movies/17.jpg";
-import Image18 from "../images/movies/18.jpg";
-import Image19 from "../images/movies/19.jpg";
-import Image20 from "../images/movies/20.jpg";
+import React, { useState, useEffect } from "react";
+
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
+import axios from "axios";
 
 import "./Movies.css";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const movies = [
-  {
-    id: 20,
-    title: "Ram Sethu",
-    poster: Image1,
-    language: "Hindi",
-    genre: "Action",
-  },
-  {
-    id: 19,
-    title: "Black Panther",
-    poster: Image2,
-    language: "English",
-    genre: "Action",
-  },
-  {
-    id: 18,
-    title: "Bhediya",
-    poster: Image3,
-    language: "Hindi",
-    genre: "Action",
-  },
-  {
-    id: 17,
-    title: "Drishyam 2",
-    poster: Image4,
-    language: "Hindi",
-    genre: "Thriller",
-  },
-  {
-    id: 16,
-    title: "Uunchai",
-    poster: Image5,
-    language: "Hindi",
-    genre: "Drama",
-  },
-  {
-    id: 15,
-    title: "Sani",
-    poster: Image6,
-    language: "Hindi",
-    genre: "Drama",
-  },
-  {
-    id: 14,
-    title: "Kantara",
-    poster: Image7,
-    language: "Telugu",
-    genre: "Drama",
-  },
-  {
-    id: 13,
-    title: "She Said",
-    poster: Image8,
-    language: "English",
-    genre: "Romance",
-  },
-  {
-    id: 12,
-    title: "Smile",
-    poster: Image9,
-    language: "English",
-    genre: "Horror",
-  },
-  {
-    id: 11,
-    title: "The Menu",
-    poster: Image10,
-    language: "English",
-    genre: "Horror",
-  },
-  {
-    id: 10,
-    title: "Spiderman",
-    poster: Image11,
-    language: "English",
-    genre: "Action",
-  },
-  {
-    id: 9,
-    title: "Argyll",
-    poster: Image12,
-    language: "English",
-    genre: "Action",
-  },
-  {
-    id: 8,
-    title: "Demon Slayer",
-    poster: Image13,
-    language: "English",
-    genre: "Action",
-  },
-  {
-    id: 7,
-    title: "Dune",
-    poster: Image14,
-    language: "English",
-    genre: "Action",
-  },
-  {
-    id: 6,
-    title: "Dune: Part 2",
-    poster: Image15,
-    language: "English",
-    genre: "Action",
-  },
-  {
-    id: 5,
-    title: "Interstellar",
-    poster: Image16,
-    language: "English",
-    genre: "Action",
-  },
-  {
-    id: 4,
-    title: "Madame Web",
-    poster: Image17,
-    language: "English",
-    genre: "Comedy",
-  },
-  {
-    id: 3,
-    title: "Oppenheimer",
-    poster: Image18,
-    language: "English",
-    genre: "Drama",
-  },
-  {
-    id: 2,
-    title: "poor Things",
-    poster: Image19,
-    language: "English",
-    genre: "Comedy",
-  },
-  {
-    id: 1,
-    title: "Wonka",
-    poster: Image20,
-    language: "English",
-    genre: "Comedy",
-  },
-  // Add more movie objects here
-];
-
 const Movies = () => {
-  const [filteredMovies, setFilteredMovies] = useState(movies);
+  const [movies, setMovies] = useState([]);
   const [filters, setFilters] = useState({ language: "", genre: "" });
+  const [filteredMovies, setFilteredMovies] = useState([]);
   const [language, setLanguage] = useState("");
   const [genre, setGenre] = useState("");
   const navigate = useNavigate();
+
+  const fetchMovies = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/movie/movies");
+      setMovies(response.data.movies); // Set movies from API response
+      setFilteredMovies(response.data.movies); // Set filteredMovies initially with all movies
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMovies(); // Fetch movies when component mounts
+  }, []);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -193,9 +46,9 @@ const Movies = () => {
     setFilteredMovies(movies);
   };
 
-  const bookTicket = () => {
+  const bookTicket = (movieId) => {
     // console.log("/movie/" + index);
-    navigate("/movie");
+    navigate(`/movie/${movieId}`);
   };
 
   const handleLanguageChange = (event) => {
@@ -267,14 +120,14 @@ const Movies = () => {
           .map((movie) => (
             <div key={movie.id} className="movie-poster">
               <img
-                src={movie.poster}
+                src={`https://image.tmdb.org/t/p/original${movie.poster}`}
                 alt={movie.title}
                 style={{ width: 300, height: 450 }}
               />
 
               <Button
                 variant="contained"
-                onClick={bookTicket}
+                onClick={() => bookTicket(movie.id)}
                 sx={{ marginTop: 1, marginRight: 10 }}
               >
                 Book Now

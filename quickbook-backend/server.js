@@ -7,7 +7,7 @@ import movieRoutes from "./routes/movieRoutes.js";
 import venueRoutes from "./routes/venueRoute.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 app.use(bodyParser.json());
 app.use(cors());

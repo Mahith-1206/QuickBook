@@ -20,19 +20,24 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Image1 from "../images/movies/15.jpg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import YouTube from "react-youtube";
 import axios from "axios";
 
 function SelectMovieScreen() {
   const navigate = useNavigate();
+  const { movieId } = useParams();
   const [movieInfo, setMovieInfo] = useState(null);
   const [showTimings, setShowTimings] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loading2, setLoading2] = useState(true);
 
+  const location = useLocation();
+
   //const movieId = "438631";
+
+  //const { movieId } = location.state;
 
   const videoOptions = {
     height: "390",
@@ -46,7 +51,7 @@ function SelectMovieScreen() {
 
   useEffect(() => {
     const fetchMovieInfo = async () => {
-      const movieId = "438631";
+      //const movieId = "438631";
 
       try {
         const response = await axios.get(
@@ -62,7 +67,6 @@ function SelectMovieScreen() {
     };
 
     const fetchShowTimings = async () => {
-      const movieId = "1";
       try {
         const response = await axios.get(
           "http://localhost:3000/movie/timings/" + movieId
@@ -80,7 +84,10 @@ function SelectMovieScreen() {
     };
     fetchShowTimings();
     fetchMovieInfo();
-  }, []);
+    return () => {
+      // Any cleanup code if needed
+    };
+  }, [movieId]);
 
   const handleBookTicket = () => {
     navigate("/bookSeat");
@@ -169,11 +176,15 @@ function SelectMovieScreen() {
                 display: "flex",
               }}
             >
-              <YouTube
-                videoId={movieInfo.trailerKey}
-                opts={videoOptions}
-                onReady={onPlayerReady}
-              />
+              {movieInfo.trailerKey ? (
+                <YouTube
+                  videoId={movieInfo.trailerKey}
+                  opts={videoOptions}
+                  onReady={onPlayerReady}
+                />
+              ) : (
+                <div>Video not found</div>
+              )}
             </Box>
             <Box flexGrow={1} ml={3}>
               <Grid container spacing={2} sx={{ padding: "20px" }}>

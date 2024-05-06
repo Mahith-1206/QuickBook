@@ -5,6 +5,7 @@ import emailRoute from "./routes/emailRoute.js";
 import userRoute from "./routes/userRoute.js";
 import movieRoutes from "./routes/movieRoutes.js";
 import venueRoutes from "./routes/venueRoute.js";
+import ticketRoutes from "./routes/bookTicketRouter.js";
 import {
   createUser,
   getUserById,
@@ -78,6 +79,7 @@ app.use("/emails", emailRoute);
 app.use("/users", userRoute);
 app.use("/movie", movieRoutes);
 app.use("/venue", venueRoutes);
+app.use("/ticket", ticketRoutes);
 // app.use("/book-ticket", bookticket);
 
 app.listen(PORT, () => {

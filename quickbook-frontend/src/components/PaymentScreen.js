@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../context/auth.context";
 
 function PaymentScreen() {
   const [redeem, setRedeem] = useState(false);
@@ -18,6 +19,7 @@ function PaymentScreen() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   const {
     id,
@@ -27,6 +29,7 @@ function PaymentScreen() {
     totalSeats,
     movieName,
     positions,
+    seatNumbersString,
   } = location.state;
 
   const [paymentDetails, setPaymentDetails] = useState({
@@ -50,6 +53,7 @@ function PaymentScreen() {
 
   const handlePayment = async () => {
     console.log("Processing payment...");
+    console.log("user details..", user.username);
 
     console.log("venue id and name", id, theatreName);
     try {
@@ -57,6 +61,7 @@ function PaymentScreen() {
       const response = await axios.put(
         "http://localhost:3000/venue/book-seats",
         {
+          booked: true,
           venueId: id,
           seats: positions,
         }

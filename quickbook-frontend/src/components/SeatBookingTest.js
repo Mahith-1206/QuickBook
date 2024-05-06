@@ -155,6 +155,7 @@ const SeatBookingTest = () => {
     }
     console.log(positions);
     var totalSeats = selectedSeats.length;
+    var seatNumbersString = selectedSeats.join(", ");
     navigate("/payment", {
       state: {
         id,
@@ -164,6 +165,7 @@ const SeatBookingTest = () => {
         totalSeats,
         movieName,
         positions,
+        seatNumbersString,
       },
     });
   };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -11,9 +11,14 @@ import {
   Grid,
   Card,
   CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import { AccountCircle as AccountCircleIcon } from "@mui/icons-material";
+import axios from "axios";
+import { useAuth } from "../context/auth.context";
 
 // Assuming userData is the object that contains the user's information
 const userData = {
@@ -47,6 +52,57 @@ const userData = {
 };
 
 const User = () => {
+  const [isBookingConfirmed, setIsBookingConfirmed] = useState(false);
+  const [ticketData, setTicketData] = useState([]);
+  const { user } = useAuth();
+  const [error, setError] = useState(null);
+
+  const fetchTickets = async () => {
+    const userName = user.username;
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/ticket/tickets/" + userName
+      );
+
+      console.log(response.data.bookings);
+
+      setTicketData(response.data.bookings); // Set movies from API response
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTickets(); // Fetch movies when component mounts
+  }, []);
+
+  const cancelTicket = async (ticket) => {
+    try {
+      console.log("positions, ", ticket.seats);
+
+      console.log("request body::", ticket.VenueID, ticket.seatPositions);
+      const response = await axios.put(
+        "http://localhost:3000/venue/book-seats",
+        {
+          booked: false,
+          venueId: ticket.VenueID,
+          seats: ticket.seatPositions,
+        }
+      );
+      console.log("response success? ", response.data.success);
+      if (response.data.success === true) {
+        setIsBookingConfirmed(true);
+      }
+    } catch (error) {
+      console.log("Movie data d " + error.message);
+      setError(error.message);
+    }
+  };
+
+  const goHome = () => {
+    setIsBookingConfirmed(false);
+  };
+
   return (
     <Box sx={{ maxWidth: 800, margin: "auto", mt: 5 }}>
       <Paper elevation={3} sx={{ padding: 3 }}>
@@ -71,23 +127,29 @@ const User = () => {
           Past Tickets
         </Typography>
         <List>
-          {userData.pastTickets.map((ticket) => (
-            <ListItem key={ticket.id} sx={{ display: "block", mb: 2 }}>
+          {ticketData.map((ticket) => (
+            <ListItem key={ticket.BookingID} sx={{ display: "block", mb: 2 }}>
               <Card variant="outlined">
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
                   <div>
                     <CardContent>
-                      <Typography variant="h6">{ticket.movieName}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Date: {ticket.date}
+                      <Typography variant="h6">{ticket.EventName}</Typography>
+                      <Typography variant="h6">
+                        Status: {ticket.Status}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Theatre: {ticket.theatre}
+                        Booking ID: {ticket.BookingID}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Seats: {ticket.noOfSeats}
+                        Date: {ticket.Time}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Theatre: {ticket.venue_name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Seats: {ticket.seatNumbers}
                       </Typography>
                     </CardContent>
                   </div>
@@ -99,7 +161,9 @@ const User = () => {
                       marginRight: "20px",
                     }}
                   >
-                    <Button>View Ticket</Button>
+                    <Button onClick={() => cancelTicket(ticket)}>
+                      Cancel Ticket
+                    </Button>
                   </div>
                 </div>
               </Card>
@@ -107,6 +171,29 @@ const User = () => {
           ))}
         </List>
       </Paper>
+      <Dialog open={isBookingConfirmed}>
+        <DialogTitle style={{ fontWeight: "bold", marginLeft: "50px" }}>
+          Booking Cancelled!
+        </DialogTitle>
+        <DialogContent>
+          Your ticket was cancelled successfully!
+          <div>
+            {
+              <Button
+                onClick={goHome}
+                style={{
+                  fontWeight: "bold",
+                  marginLeft: "120px",
+                  marginTop: "20px",
+                }}
+              >
+                {" "}
+                Okay{" "}
+              </Button>
+            }
+          </div>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

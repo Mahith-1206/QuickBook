@@ -40,12 +40,29 @@ const getMovieController = async (req, res) => {
       (item) => item.type === "Trailer"
     );
 
-    console.log(trailer);
-
     if (trailer) {
       movieDetails.trailerKey = trailer.key;
     } else {
-      movieDetails.trailerKey = null;
+      console.log("movie id", movieId);
+      try {
+        const moviesCollection = db.collection("movie_names");
+
+        const dbValue = await moviesCollection.findOne({ movie_id: movieId });
+
+        console.log("trailer key: ", dbValue.trailer_key);
+        movieDetails.trailerKey = dbValue.trailer_key;
+      } catch (error) {
+        console.error("Error getting movie details:", error);
+      }
+
+      // const dbValue = await db
+      //   .collection("movie_names")
+      //   .findOne({
+      //     movie_id: movieId,
+      //   })
+      //   .then(() => (movieDetails.trailerKey = dbValue));
+      // console.log("trailer key: ", dbValue);
+      // movieDetails.trailerKey = null;
     }
 
     const movieCastUrl =

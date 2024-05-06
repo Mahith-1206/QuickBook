@@ -1,5 +1,7 @@
 import { blue } from "@mui/material/colors";
 import "./App.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Header from "./components/Header";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Navigation from "./components/Navigation";
@@ -11,6 +13,7 @@ import SeatBookingTest from "./components/SeatBookingTest";
 import PaymentScreen from "./components/PaymentScreen";
 import Movies from "./components/Movies";
 import User from "./components/User";
+import { AuthProvider } from "./context/auth.context";
 
 const theme = createTheme({
   palette: {
@@ -24,9 +27,11 @@ const theme = createTheme({
 });
 
 function App() {
+  
   return (
     // <ThemeProvider theme={theme}>
-
+    <AuthProvider>
+      <ToastContainer theme="dark" />
     <Routes>
       <Route
         path="/"
@@ -103,6 +108,8 @@ function App() {
         }
       />
     </Routes>
+    </AuthProvider>
+    
   );
 }
 

@@ -19,6 +19,7 @@ import Button from "@mui/material/Button";
 import { AccountCircle as AccountCircleIcon } from "@mui/icons-material";
 import axios from "axios";
 import { useAuth } from "../context/auth.context";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // Assuming userData is the object that contains the user's information
 const userData = {
@@ -52,6 +53,7 @@ const userData = {
 };
 
 const User = () => {
+  const navigate = useNavigate();
   const [isBookingConfirmed, setIsBookingConfirmed] = useState(false);
   const [ticketData, setTicketData] = useState([]);
   const { user } = useAuth();
@@ -89,8 +91,17 @@ const User = () => {
           seats: ticket.seatPositions,
         }
       );
+
+      const response2 = await axios.put(
+        "http://localhost:3000/venue/cancel-seats",
+        {
+          BookingID: ticket.BookingID,
+        }
+      );
+
       console.log("response success? ", response.data.success);
-      if (response.data.success === true) {
+      console.log("response2 success? ", response2.data.success);
+      if (response.data.success === true && response2.data.success === true) {
         setIsBookingConfirmed(true);
       }
     } catch (error) {
@@ -101,6 +112,7 @@ const User = () => {
 
   const goHome = () => {
     setIsBookingConfirmed(false);
+    navigate("/home");
   };
 
   return (

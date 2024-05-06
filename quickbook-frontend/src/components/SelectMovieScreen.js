@@ -97,7 +97,9 @@ function SelectMovieScreen() {
   const bookMovie = (id, theatreName, timing) => {
     // Replace this with your booking API call
     console.log(`Booking movie at ${theatreName} for ${timing}`);
-    navigate("/bookSeat", { state: { id, theatreName, timing, movieName } });
+    navigate("/bookSeat", {
+      state: { id, theatreName, timing, movieName, movieId },
+    });
   };
 
   return (

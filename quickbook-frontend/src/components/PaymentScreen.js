@@ -30,6 +30,7 @@ function PaymentScreen() {
     movieName,
     positions,
     seatNumbersString,
+    movieId,
   } = location.state;
 
   const [paymentDetails, setPaymentDetails] = useState({
@@ -54,7 +55,7 @@ function PaymentScreen() {
   const handlePayment = async () => {
     console.log("Processing payment...");
     console.log("user details..", user.username);
-
+    console.log("movie id::::", movieId);
     console.log("venue id and name", id, theatreName);
     try {
       console.log("positions, ", positions);
@@ -66,8 +67,24 @@ function PaymentScreen() {
           seats: positions,
         }
       );
+
+      const bookingResponse = await axios.put(
+        "http://localhost:3000/venue/booking-seats",
+        {
+          username: user.username,
+          venueId: id,
+          seatNumbers: seatNumbersString,
+          positions: positions,
+          eventId: movieId,
+        }
+      );
+
       console.log("response success? ", response.data.success);
-      if (response.data.success === true) {
+      console.log("booking response success? ", response.data.success);
+      if (
+        response.data.success === true &&
+        bookingResponse.data.success === true
+      ) {
         setIsBookingConfirmed(true);
       }
     } catch (error) {

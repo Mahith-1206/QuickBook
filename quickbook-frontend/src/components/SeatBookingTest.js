@@ -27,9 +27,10 @@ const SeatBookingTest = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { id, theatreName, timing, movieName } = location.state;
+  const { id, theatreName, timing, movieName, movieId } = location.state;
 
   useEffect(() => {
+    console.log("movie id: ", movieId);
     const fetchTheatreSeats = async () => {
       const venueId = "1";
       console.log("venue id and name", id, theatreName);
@@ -166,6 +167,7 @@ const SeatBookingTest = () => {
         movieName,
         positions,
         seatNumbersString,
+        movieId,
       },
     });
   };

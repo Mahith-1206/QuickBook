@@ -14,4 +14,52 @@ const getBookingsByUserId = async (userId) => {
   }
 };
 
-export { getBookingsByUserId };
+const cancelBookingRow = async (BookingID) => {
+  try {
+    const query = `UPDATE UserBookings SET Status = 'Cancelled' WHERE BookingID = ?`;
+
+    const [rows] = await pool.query(query, [BookingID]);
+    return rows;
+  } catch (error) {
+    throw new Error(`Error while cancelling ticket: ${error.message}`);
+  }
+};
+
+const addBookingRow = async (
+  username,
+  venueId,
+  time,
+  seatNumbers,
+  positions,
+  eventId,
+  status
+) => {
+  try {
+    console.log(
+      username,
+      venueId,
+      time,
+      seatNumbers,
+      positions,
+      eventId,
+      status
+    );
+
+    const seatPositionsString = JSON.stringify(positions);
+    const query = `INSERT INTO UserBookings (username, VenueID, Time, seatNumbers, seatPositions, EventID, Status) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const [rows] = await pool.query(query, [
+      username,
+      venueId,
+      time,
+      seatNumbers,
+      seatPositionsString,
+      eventId,
+      status,
+    ]);
+    return rows;
+  } catch (error) {
+    throw new Error(`Error while fetching venues: ${error.message}`);
+  }
+};
+
+export { getBookingsByUserId, addBookingRow, cancelBookingRow };

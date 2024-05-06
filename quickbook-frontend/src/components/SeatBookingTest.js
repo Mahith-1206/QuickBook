@@ -35,7 +35,7 @@ const SeatBookingTest = () => {
       const venueId = "1";
       console.log("venue id and name", id, theatreName);
       try {
-        const response = await axios.get("http://localhost:3000/venue/" + id);
+        const response = await axios.get("http://localhost:4000/venue/" + id);
         console.log("Venue data d " + response.data.venue.id);
         setVenueInfo(response.data.venue);
         setSeatNumbers(response.data.venue.seats);
@@ -59,7 +59,7 @@ const SeatBookingTest = () => {
 
     // Update the state with the new selected seats
     setSelectedSeats(updatedSelectedSeats);
-    setPrice(updatedSelectedSeats.length * 15);
+    setPrice(updatedSelectedSeats.length * 12.99);
   };
 
   // Dummy array of seat numbers for demonstration

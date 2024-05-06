@@ -1,157 +1,141 @@
 import React, { useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
+import { GoogleLogin } from '@react-oauth/google';
+import { TextField, Button, Box, Typography, IconButton } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import wrapPromiseWithToast from "../utils/wrapPromiseWithToast";
-import { TextField, Button, Box, Typography, IconButton, Paper } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close'; // Import a close icon from Material UI
-import { useAuth } from '../context/auth.context';
-import { message } from "antd";
+import CloseIcon from '@mui/icons-material/Close';
 import RegisterForm from './RegisterForm';
+import { useAuth } from '../context/auth.context';
 
-const LoginForm = (onLoggedInToggle) => {
-  // State to manage the form's visibility
+const LoginForm = () => {
   const [isVisible, setIsVisible] = useState(true);
-  const [username, setUserName] = useState("");
-//   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
   const [showRegisterForm, setShowRegisterForm] = useState(false);
 
-  const {login} = useAuth();
+  const { login } = useAuth();
 
-  // Function to check if all required fields are filled
   const validateFields = () => {
-    const missingFields = [];
-    if (!username) missingFields.push("Username");
-    // if (!email) missingFields.push("Email");
-    if (!password) missingFields.push("Password");
-
-    if (missingFields.length) {
-      toast.error(`Please fill in the following fields: ${missingFields.join(", ")}`);
-      return false; // Validation failed
+    if (!username || !password) {
+      toast.error('Username and password are required.');
+      return false;
     }
-
-    return true; // Validation succeeded
+    return true;
   };
 
-  // Function to simulate registration process
-  const handleRegisterButton = async () => {
+  const handleLogin = async () => {
+    if (validateFields()) {
+      try {
+        const response = await login(username, password);
+
+        if (response.success) {
+          toast.success('Login successful!');
+        } else {
+          toast.error('Login failed. Please check your credentials.');
+        }
+      } catch (error) {
+        console.error('Error during login:', error);
+        toast.error('An error occurred during login. Please try again.');
+      }
+    }
+  };
+
+  const handleGoogleLoginSuccess = (credentialResponse) => {
+    console.log('Google login successful:', credentialResponse);
+    toast.success('Google login successful!');
+  };
+
+  const handleGoogleLoginFailure = (error) => {
+    console.error('Google login failed:', error);
+    toast.error('Google login failed. Please try again.');
+  };
+
+  const handleRegisterButton = () => {
     setShowRegisterForm(true);
   };
 
-
-const handleLogin = async ()=>{
-    console.log("Login");
-    if (validateFields()) {
-      try {
-        // Await the asynchronous register function to ensure proper error handling
-        const response = await login(username, password);
-        const res=response.data;
-        if (res.success) {
-          // Registration was successful
-          // message.success("Registration successful!");
-          toast.success("Successfully Logged In!");
-        } else {
-          // If success is false, display error messages
-          // message.error(response.message || "Registration failed.");
-          toast.error(res.message || "Login failed. Please try again.");
-        }
-  
-      } catch (error) {
-        // Handle exceptions and unexpected errors
-        console.error("Error during Logging in:", error);
-  
-        const errorMessage = error.response?.data?.error || "An unexpected error occurred.";
-        message.error(errorMessage); // Display error message from server
-        toast.error("An error occurred during Logging in. Please try again.");
-      }
-    } else {
-      // Validation failed, inform user to fill in required fields
-      toast.error("Please fill in all required fields.");
-    }
-}
-  // Function to close the form
   const closeForm = () => {
     setIsVisible(false); // Hide the form
   };
 
   if (!isVisible) {
-    return null; // Don't render if the form is not visible
+    return null; // Don't render if the form is closed
   }
 
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} />
       <Box
-        component="div"
         sx={{
-          position: 'fixed', // Fixed position
-          top: '50%', // Center vertically
-          left: '50%', // Center horizontally
-          transform: 'translate(-50%, -50%)', // Proper centering
-          zIndex: 1000, // High z-index
-          background: 'rgba(255, 255, 255, 0.9)', // Slightly transparent background
-          boxShadow: 24, // Shadow for depth
-          padding: 4, // Padding
-          borderRadius: 2, // Rounded corners
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 1000,
+          background: 'rgba(255, 255, 255, 0.9)',
+          boxShadow: 24,
+          padding: 4,
+          borderRadius: 2,
+          maxWidth: 400,
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">Login/Register</Typography>
+          <Typography variant="h6">Login</Typography>
           <IconButton onClick={closeForm}>
-            <CloseIcon /> {/* Close button */}
+            <CloseIcon />
           </IconButton>
         </Box>
 
-        {!showRegisterForm ? (<Box component="form" onSubmit={(e) => e.preventDefault()}> {/* Prevent default submit */}
-          <TextField
-            name="username"
-            label="Username"
-            value={username}
-            onChange={(e) => setUserName(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
+        {!showRegisterForm ? (
+          <Box component="form" onSubmit={(e) => e.preventDefault()}>
+            <TextField
+              name="username"
+              label="Username"
+              value={username}
+              onChange={(e) => setUserName(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
 
-          {/* <TextField
-            name="email"
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            fullWidth
-            margin="normal"
-          /> */}
+            <TextField
+              name="password"
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
 
-          <TextField
-            name="password"
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
+            <Button
+              type="button"
+              variant="contained"
+              fullWidth
+              sx={{ mt: 2 }}
+              onClick={handleLogin}
+            >
+              Login
+            </Button>
 
-          <Button
-            type="button" // To prevent default form submission
-            variant="contained"
-            fullWidth
-            sx={{ mt: 2 }}
-            onClick={handleLogin}
-          >
-            Login
-          </Button>
-          <Button
-            type="button" // To prevent default form submission
-            variant="contained"
-            fullWidth
-            sx={{ mt: 2 }}
-            onClick={handleRegisterButton}
-          >
-            Don't Have an account, Register Here
-          </Button>
-        </Box>) : (<RegisterForm/>)}
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={handleGoogleLoginFailure}
+              useOneTap // Optional: enables Google's one-tap sign-in
+            />
+
+            <Button
+              type="button"
+              variant="outlined"
+              fullWidth
+              sx={{ mt: 2 }}
+              onClick={handleRegisterButton}
+            >
+              Don't have an account? Register
+            </Button>
+          </Box>
+        ) : (
+          <RegisterForm />
+        )}
       </Box>
     </>
   );

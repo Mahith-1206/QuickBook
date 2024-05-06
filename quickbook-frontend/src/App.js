@@ -14,6 +14,9 @@ import PaymentScreen from "./components/PaymentScreen";
 import Movies from "./components/Movies";
 import User from "./components/User";
 import { AuthProvider } from "./context/auth.context";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const clientId = "275711832699-tftemu6kv68m4t50vbeipm5ampg0frbk.apps.googleusercontent.com"
 
 const theme = createTheme({
   palette: {
@@ -30,7 +33,9 @@ function App() {
   
   return (
     // <ThemeProvider theme={theme}>
+    <GoogleOAuthProvider clientId={clientId}>
     <AuthProvider>
+      
       <ToastContainer theme="dark" />
     <Routes>
       <Route
@@ -54,7 +59,7 @@ function App() {
         }
       />
       <Route
-        path="/bookseat"
+        path="/bookSeat"
         element={
           <>
             <ThemeProvider theme={theme}>
@@ -108,7 +113,10 @@ function App() {
         }
       />
     </Routes>
+      
+      
     </AuthProvider>
+    </GoogleOAuthProvider>
     
   );
 }

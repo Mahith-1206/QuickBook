@@ -26,13 +26,12 @@ import Image6 from "../images/movies/6.avif";
 import Image7 from "../images/movies/7.avif";
 import Image8 from "../images/movies/8.avif";
 import Image9 from "../images/movies/9.avif";
-import LoginForm from "./LoginForm";
 import { useAuth } from "../context/auth.context";
 
 const Header = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const {user, logout} = useAuth();
+  const { user, logout } = useAuth();
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -58,10 +57,9 @@ const Header = () => {
     navigate("/user");
   };
 
-
-  const handleLogout = () =>{
+  const handleLogout = () => {
     logout();
-  }
+  };
 
   useEffect(() => {
     if (query.trim() !== "") {
@@ -78,10 +76,8 @@ const Header = () => {
     }
   }, [query]);
 
-
   // const [name, setName] = useState("");
   // console.log(name);
-
 
   const movies = [
     { id: 1, title: "Ram Sethu", poster: Image1 },
@@ -111,34 +107,34 @@ const Header = () => {
   //         {/* This icon serves as the app logo */}
   //       </IconButton>
   //       {/* This Box component serves as a spacer */}
-        // <Box flex={1}>
-        //   <TextField
-        //   // onChange={(e) => {
-        //   //   setName(e.target.value);
-        //   // }}
-        //     style={{ color: "white" }}
-        //     fullWidth
-        //     variant="outlined"
-        //     placeholder="Search for movies/events/shows..."
-        //     InputProps={{
-        //       sx: {
-        //         "& .MuiInputBase-input::placeholder": {
-        //           // Targeting the placeholder style
-        //           color: "white", // Change to your desired placeholder color
-        //           opacity: 1, // Optional: adjust the opacity of the placeholder text
-        //         },
-        //         background: "#353232",
-        //         color: "white",
-        //       },
+  // <Box flex={1}>
+  //   <TextField
+  //   // onChange={(e) => {
+  //   //   setName(e.target.value);
+  //   // }}
+  //     style={{ color: "white" }}
+  //     fullWidth
+  //     variant="outlined"
+  //     placeholder="Search for movies/events/shows..."
+  //     InputProps={{
+  //       sx: {
+  //         "& .MuiInputBase-input::placeholder": {
+  //           // Targeting the placeholder style
+  //           color: "white", // Change to your desired placeholder color
+  //           opacity: 1, // Optional: adjust the opacity of the placeholder text
+  //         },
+  //         background: "#353232",
+  //         color: "white",
+  //       },
 
-        //       startAdornment: (
-        //         <InputAdornment position="start">
-        //           <SearchIcon style={{ color: "white" }} />
-        //         </InputAdornment>
-        //       ),
-        //     }}
-        //   />
-        // </Box>
+  //       startAdornment: (
+  //         <InputAdornment position="start">
+  //           <SearchIcon style={{ color: "white" }} />
+  //         </InputAdornment>
+  //       ),
+  //     }}
+  //   />
+  // </Box>
 
   //       <Button onClick={handleClick} color="inherit" sx={{ ml: 2 }} >
   //       {/* {seen ? <Login toggle={togglePop} /> : null} */}
@@ -153,7 +149,6 @@ const Header = () => {
   const updateResults = (newResults) => {
     setResults(newResults);
   };
-
 
   //new version
   return (
@@ -187,7 +182,7 @@ const Header = () => {
             placeholder="  Search for a movie..."
           />
         </Box>
-        
+
         {!user ? (
           <>
             <Button onClick={handleClick} color="inherit" sx={{ ml: 2 }}>
@@ -200,13 +195,15 @@ const Header = () => {
               />
             )}
           </>
-        ) : (<><Button onClick={userProfile} color="inherit" sx={{ ml: 2 }}>
-        Welcome, {user.username}
-      </Button>
-      <Button onClick={handleLogout} color="inherit" sx={{ ml: 2 }}>
-      Logout
-    </Button></>
-          
+        ) : (
+          <>
+            <Button onClick={userProfile} color="inherit" sx={{ ml: 2 }}>
+              Welcome, {user.username}
+            </Button>
+            <Button onClick={handleLogout} color="inherit" sx={{ ml: 2 }}>
+              Logout
+            </Button>
+          </>
         )}
       </Toolbar>
       <SearchAutocomplete results={results} updateResults={updateResults} />

@@ -65,13 +65,12 @@ export default function MovieCarousal() {
     ],
   };
 
+  // const bookTicket = (index) => {
+  //   console.log("/movieeee/", index);
+  //   navigate("/movie");
+  //   // navigate(`/movie/${index}`);
 
-  const bookTicket = (index) => {
-    console.log("/movieeee/", index);
-    navigate("/movie");
-    // navigate(`/movie/${index}`);
-
-  }
+  // }
   const settings2 = {
     dots: true, // Show dot indicators
     infinite: false, // Infinite looping
@@ -189,9 +188,7 @@ export default function MovieCarousal() {
               />
               <Button
                 variant="contained"
-
                 onClick={() => bookTicket(index.id)}
-
                 sx={{ marginTop: 1, marginRight: 5, marginLeft: 12 }}
               >
                 Book Now

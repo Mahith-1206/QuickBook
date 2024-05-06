@@ -1,8 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 const apiService = axios.create({
-  baseURL: "http://localhost:4000"
+  baseURL: "http://localhost:3000",
 });
-
 
 //Need to implement authorization middleware
 // apiService.interceptors.request.use(

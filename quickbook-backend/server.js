@@ -11,44 +11,46 @@ import {
   getUsers,
   updateUser,
   deleteUser,
-  getUserByUsername
+  getUserByUsername,
 } from "./models/userModel.js";
 
-
-
+const app = express();
 const PORT = 3000;
-
 
 app.use(bodyParser.json());
 app.use(cors());
 
 // Define your routes here
-app.post('/users', async (req, res) => {
+app.post("/users", async (req, res) => {
   console.log("Entered backend");
   const { username, email, password } = req.body;
 
   try {
     // Validate required fields
     if (!username || !email || !password) {
-      return res.status(400).json({ success: false, error: 'All fields are required' });
+      return res
+        .status(400)
+        .json({ success: false, error: "All fields are required" });
     }
 
     const user = await createUser({ username, email, password }); // Create the user
     res.status(201).json({ success: true, user }); // Return success response
   } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).json({ success: false, error: 'Could not create user' });
+    console.error("Error creating user:", error);
+    res.status(500).json({ success: false, error: "Could not create user" });
   }
 });
 
-app.post('/login', async (req, res) => {
+app.post("/login", async (req, res) => {
   console.log("Entered backend");
   const { username, password } = req.body;
 
   try {
     // Validate required fields
     if (!username || !password) {
-      return res.status(400).json({ success: false, error: 'Username and password are required' });
+      return res
+        .status(400)
+        .json({ success: false, error: "Username and password are required" });
     }
 
     // Retrieve the user by username from the database
@@ -60,14 +62,17 @@ app.post('/login', async (req, res) => {
       return res.status(200).json({ success: true, user });
     } else {
       // If not successful, return an error response
-      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+      return res
+        .status(401)
+        .json({ success: false, error: "Invalid credentials" });
     }
   } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).json({ success: false, error: 'An error occurred during login' });
+    console.error("Error during login:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "An error occurred during login" });
   }
 });
-
 
 app.use("/emails", emailRoute);
 app.use("/users", userRoute);

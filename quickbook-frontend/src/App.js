@@ -44,7 +44,7 @@ function App() {
         }
       />
       <Route
-        path="/movie"
+        path="/movie/:movieId" // Specify the route parameter for movieId
         element={
           <>
             <ThemeProvider theme={theme}>

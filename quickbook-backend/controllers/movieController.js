@@ -1,6 +1,12 @@
 import axios from "axios";
-import { getVenuesByEventId } from "../models/eventVenueModel.js";
+import {
+  getVenuesByEventId,
+  getAllMovieIds,
+  getAllTrendingMovieIds,
+  getAllPromotedMovieIds,
+} from "../models/eventVenueModel.js";
 import db from "../config/dbConfig.js";
+import redisClient from "../config/redis.js";
 
 const getMovieController = async (req, res) => {
   try {
@@ -34,7 +40,13 @@ const getMovieController = async (req, res) => {
       (item) => item.type === "Trailer"
     );
 
-    movieDetails.trailerKey = trailer.key;
+    console.log(trailer);
+
+    if (trailer) {
+      movieDetails.trailerKey = trailer.key;
+    } else {
+      movieDetails.trailerKey = null;
+    }
 
     const movieCastUrl =
       "https://api.themoviedb.org/3/movie/" +
@@ -85,37 +97,9 @@ const searchMovieController = async (req, res) => {
   }
 
   const moviesCollection = db.collection("movie_names");
-  // Perform pattern matching using MongoDB's $regex operator
-  // const regexQuery = { name: { $regex: `^${query}`} };
   const regexQuery = { name: { $regex: `^${query}` } };
   console.log("query: ", query);
   console.log("regex: ", regexQuery);
-
-  // db.collection("movie_names")
-  //   .find({
-  //     regexQuery,
-  //   })
-  //   .toArray()
-  //   .then((restaurants) => {
-  //     if (restaurants.length === 0) {
-  //       return res
-  //         .status(404)
-  //         .send("No restaurants found for the given borough and cuisine");
-  //     }
-  //     res.send(restaurants);
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error fetching restaurants:", error);
-  //     res.status(500).send("An unexpected error occurred.");
-  //   });
-
-  // moviesCollection.find(regexQuery).toArray((err, result) => {
-  //   if (err) {
-  //     console.error("Error fetching search results:", err);
-  //     return res.status(500).json({ error: "Internal server error" });
-  //   }
-  //   res.json(result.map((movie) => movie.name));
-  // });
 
   const docs = moviesCollection.find({
     name: {
@@ -128,4 +112,146 @@ const searchMovieController = async (req, res) => {
   res.status(200).json(data);
 };
 
-export { getMovieController, getMovieTimingsController, searchMovieController };
+const getMoviesController = async (req, res) => {
+  try {
+    const cachedMovies = await redisClient.get("movies");
+    if (cachedMovies) {
+      console.log("Movies found in cache");
+      return res
+        .status(200)
+        .json({ success: true, movies: JSON.parse(cachedMovies) });
+    }
+
+    const movies = await getAllMovieIds();
+
+    console.log(movies);
+    if (!movies || movies.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "No movies found in the database" });
+    }
+
+    const apiKey = "cd3b90152fe991306b189d1e8dd01428";
+    const moviesData = [];
+
+    for (const dbmovie of movies) {
+      const movieInfoUrl = `https://api.themoviedb.org/3/movie/${dbmovie.EventID}?api_key=${apiKey}`;
+
+      const response = await axios.get(movieInfoUrl);
+      const movieDetails = response.data;
+
+      const { original_title, poster_path } = movieDetails;
+      const genreName = dbmovie.Genre;
+
+      const movie = {
+        id: dbmovie.EventID,
+        title: original_title,
+        language: dbmovie.Language,
+        genre: genreName,
+        poster: poster_path,
+      };
+
+      moviesData.push(movie);
+    }
+
+    res.status(200).json({ success: true, movies: moviesData });
+  } catch (error) {
+    console.error("Error getting movie details:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Could not fetch movie details" });
+  }
+};
+
+const getTrendingMoviesController = async (req, res) => {
+  try {
+    const movies = await getAllTrendingMovieIds();
+
+    if (!movies || movies.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "No movies found in the database" });
+    }
+
+    const apiKey = "cd3b90152fe991306b189d1e8dd01428";
+    const moviesData = [];
+
+    for (const dbmovie of movies) {
+      const movieInfoUrl = `https://api.themoviedb.org/3/movie/${dbmovie.EventID}?api_key=${apiKey}`;
+
+      const response = await axios.get(movieInfoUrl);
+      const movieDetails = response.data;
+
+      const { original_title, poster_path } = movieDetails;
+      const genreName = dbmovie.Genre;
+
+      const movie = {
+        id: dbmovie.EventID,
+        title: original_title,
+        language: dbmovie.Language,
+        genre: genreName,
+        poster: poster_path,
+      };
+
+      moviesData.push(movie);
+    }
+
+    res.status(200).json({ success: true, movies: moviesData });
+  } catch (error) {
+    console.error("Error getting movie details:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Could not fetch movie details" });
+  }
+};
+
+const getPromotedMoviesController = async (req, res) => {
+  try {
+    const movies = await getAllPromotedMovieIds();
+
+    if (!movies || movies.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "No movies found in the database" });
+    }
+
+    const apiKey = "cd3b90152fe991306b189d1e8dd01428";
+    const moviesData = [];
+
+    for (const dbMovie of movies) {
+      const movieInfoUrl = `https://api.themoviedb.org/3/movie/${dbMovie.EventID}?api_key=${apiKey}`;
+
+      const response = await axios.get(movieInfoUrl);
+      const movieDetails = response.data;
+
+      const { original_title, poster_path } = movieDetails;
+      const genreName = dbMovie.Genre;
+
+      const movie = {
+        id: dbMovie.EventID,
+        title: original_title,
+        language: dbMovie.Language,
+        genre: genreName,
+        poster: poster_path,
+      };
+
+      moviesData.push(movie);
+    }
+
+    res.status(200).json({ success: true, movies: moviesData });
+  } catch (error) {
+    console.error("Error getting movie details:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Could not fetch movie details" });
+  }
+};
+
+export {
+  getMovieController,
+  getMovieTimingsController,
+  searchMovieController,
+  getMoviesController,
+  getTrendingMoviesController,
+  getPromotedMoviesController,
+};

@@ -3,6 +3,7 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
+import axios from "axios";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -10,7 +11,10 @@ import MenuIcon from "@mui/icons-material/Menu"; // Assuming you use it as the a
 import { Box, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
+import LoginForm from "./LoginForm";
+
 import SearchAutocomplete from "./SearchAutocomplete";
 
 import Image1 from "../images/movies/1.avif";
@@ -29,6 +33,9 @@ const Header = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const {user, logout} = useAuth();
+
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
 
   const handleClick = () => {
     setShowLogin(true);
@@ -51,12 +58,30 @@ const Header = () => {
     navigate("/user");
   };
 
+
   const handleLogout = () =>{
     logout();
   }
 
+  useEffect(() => {
+    if (query.trim() !== "") {
+      axios
+        .get(`http://localhost:3000/movie/search?query=${query}`)
+        .then((response) => {
+          setResults(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching search results:", error);
+        });
+    } else {
+      setResults([]);
+    }
+  }, [query]);
+
+
   // const [name, setName] = useState("");
   // console.log(name);
+
 
   const movies = [
     { id: 1, title: "Ram Sethu", poster: Image1 },
@@ -125,6 +150,11 @@ const Header = () => {
   //   </AppBar>
   // );
 
+  const updateResults = (newResults) => {
+    setResults(newResults);
+  };
+
+
   //new version
   return (
     <AppBar position="static" sx={{ minHeight: "10px" }}>
@@ -141,7 +171,21 @@ const Header = () => {
         </IconButton>
         {/* This Box component serves as a spacer */}
         <Box flex={1}>
-          <SearchAutocomplete />
+          <input
+            type="text"
+            style={{
+              marginLeft: "20px",
+              marginTop: "10px",
+              width: "900px",
+              height: "50px",
+              borderRadius: "5px",
+              fontStyle: "italic",
+              fontSize: "17px",
+            }}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="  Search for a movie..."
+          />
         </Box>
         
         {!user ? (
@@ -165,6 +209,7 @@ const Header = () => {
           
         )}
       </Toolbar>
+      <SearchAutocomplete results={results} updateResults={updateResults} />
     </AppBar>
   );
 };

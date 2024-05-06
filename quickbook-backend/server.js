@@ -15,8 +15,9 @@ import {
 } from "./models/userModel.js";
 
 
-const app = express();
-const PORT = process.env.PORT || 4000;
+
+const PORT = 3000;
+
 
 app.use(bodyParser.json());
 app.use(cors());

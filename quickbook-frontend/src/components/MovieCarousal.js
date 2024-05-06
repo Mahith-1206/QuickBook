@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import { Button } from "@mui/material";
+import axios from "axios";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Image1 from "../images/movies/11.jpg";
@@ -23,11 +24,13 @@ import "./moviecarousal.css";
 
 export default function MovieCarousal() {
   const navigate = useNavigate();
+  const [movies, setMovies] = useState([]);
+  const [promotedMovies, setPromotedMovies] = useState([]);
 
   const settings = {
     dots: true, // Show dot indicators
     infinite: true, // Infinite looping
-    speed: 4000, // Animation speed
+    speed: 7000, // Animation speed
     slidesToShow: 5, // Number of slides to show at once
     slidesToScroll: 5,
     autoplay: true,
@@ -62,24 +65,83 @@ export default function MovieCarousal() {
     ],
   };
 
+
   const bookTicket = (index) => {
     console.log("/movieeee/", index);
     navigate("/movie");
     // navigate(`/movie/${index}`);
+
+  }
+  const settings2 = {
+    dots: true, // Show dot indicators
+    infinite: false, // Infinite looping
+    speed: 7000, // Animation speed
+    slidesToShow: 5, // Number of slides to show at once
+    slidesToScroll: 0,
+    autoplay: false,
+    pauseOnHover: true,
+    cssEase: "linear", // Number of slides to scroll at once
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          infinite: true,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          initialSlide: 2,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
 
-  const movies = [
-    { id: 1, title: "Ram Sethu", poster: Image1 },
-    { id: 2, title: "Black Panther", poster: Image2 },
-    { id: 3, title: "Bh", poster: Image3 },
-    { id: 4, title: "Drishyam", poster: Image4 },
-    { id: 5, title: "Dhrishyam 2", poster: Image5 },
-    { id: 6, title: "UUnchai", poster: Image6 },
-    { id: 7, title: "Inception", poster: Image7 },
-    { id: 8, title: "Interstellar", poster: Image8 },
-    { id: 9, title: "Inception", poster: Image9 },
-    // Add more movie objects here
-  ];
+  const fetchTrendingMovies = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/movie/Trendingmovies"
+      );
+      setMovies(response.data.movies); // Set movies from API response
+      //setFilteredMovies(response.data.movies); // Set filteredMovies initially with all movies
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+    }
+  };
+
+  const fetchPromotedMovies = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/movie/Promotedmovies"
+      );
+      setPromotedMovies(response.data.movies); // Set movies from API response
+      //setFilteredMovies(response.data.movies); // Set filteredMovies initially with all movies
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTrendingMovies();
+    fetchPromotedMovies(); // Fetch movies when component mounts
+  }, []);
+
+  const bookTicket = (movieId) => {
+    // console.log("/movie/" + index);
+    navigate(`/movie/${movieId}`);
+  };
 
   const shows = [
     { id: 1, title: "Ram Sethu", poster: Image10 },
@@ -89,21 +151,30 @@ export default function MovieCarousal() {
     { id: 5, title: "Dhrishyam 2", poster: Image14 },
   ];
 
-  // const moviePosters = [
-  //   Image1,
-  //   Image2,
-  //   Image3,
-  //   Image4,
-  //   Image5,
-  //   Image6,
-  //   Image7,
-  //   Image8,
-  //   Image9,
-  // ];
-
   // old version(mahith)
   return (
     <div style={{ marginTop: "35px" }}>
+      <div className="elevated-carousal2">
+        <h3 style={{ padding: "20px", fontSize: "20px" }}>Promoted Movies</h3>
+        <Slider {...settings2}>
+          {promotedMovies.map((index) => (
+            <div key={index} style={{}}>
+              <img
+                src={`https://image.tmdb.org/t/p/original${index.poster}`}
+                alt={`Movie Poster ${index.title}`}
+                style={{ width: "80%", height: "auto" }}
+              />
+              <Button
+                variant="contained"
+                onClick={() => bookTicket(index.id)}
+                sx={{ marginTop: 1, marginRight: 5, marginLeft: 12 }}
+              >
+                Book Now
+              </Button>
+            </div>
+          ))}
+        </Slider>
+      </div>
       <div className="elevated-carousal">
         <h3 style={{ padding: "20px", fontSize: "20px" }}>
           Now showing in theatres
@@ -112,13 +183,15 @@ export default function MovieCarousal() {
           {movies.map((index) => (
             <div key={index} style={{}}>
               <img
-                src={index.poster}
-                alt={`Movie Poster ${index + 1}`}
+                src={`https://image.tmdb.org/t/p/original${index.poster}`}
+                alt={`Movie Poster ${index.title}`}
                 style={{ width: "80%", height: "auto" }}
               />
               <Button
                 variant="contained"
-                onClick={() => bookTicket(index)}
+
+                onClick={() => bookTicket(index.id)}
+
                 sx={{ marginTop: 1, marginRight: 5, marginLeft: 12 }}
               >
                 Book Now
@@ -153,29 +226,4 @@ export default function MovieCarousal() {
       </div>
     </div>
   );
-
-  //new version
-  // return (
-  //   <div style={{ marginTop: "35px" }}>
-  //     <h3>Now showing</h3>
-  //     <Slider {...settings}>
-  //       {movies.map((x) => (
-  //         <div key={x} style={{}}>
-  //           <img
-  //             src={x.poster}
-  //             alt={`Movie Poster ${x + 1}`}
-  //             style={{ width: "80%", height: "auto" }}
-  //           />
-  //           <Button
-  //             variant="contained"
-  //             onClick={bookTicket}
-  //             sx={{ marginTop: 1, marginRight: 5 }}
-  //           >
-  //             Book Now
-  //           </Button>
-  //         </div>
-  //       ))}
-  //     </Slider>
-  //   </div>
-  // );
 }

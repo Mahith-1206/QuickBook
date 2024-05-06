@@ -27,7 +27,7 @@ const bookSeatsController = async (req, res) => {
     console.log(seats);
 
     await bookSeats(venueId, seats);
-    res.status(200).json({ success: true, message: "Ticket bookeds success" });
+    res.status(200).json({ success: true, message: "Ticket booked success" });
   } catch (error) {
     console.error("Error updating seat booking", error);
     res

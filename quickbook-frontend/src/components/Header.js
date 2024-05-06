@@ -11,7 +11,6 @@ import { Box, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import LoginForm from "./LoginForm";
 import SearchAutocomplete from "./SearchAutocomplete";
 
 import Image1 from "../images/movies/1.avif";
@@ -23,10 +22,13 @@ import Image6 from "../images/movies/6.avif";
 import Image7 from "../images/movies/7.avif";
 import Image8 from "../images/movies/8.avif";
 import Image9 from "../images/movies/9.avif";
+import LoginForm from "./LoginForm";
+import { useAuth } from "../context/auth.context";
 
 const Header = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const {user, logout} = useAuth();
 
   const handleClick = () => {
     setShowLogin(true);
@@ -48,6 +50,10 @@ const Header = () => {
   const userProfile = () => {
     navigate("/user");
   };
+
+  const handleLogout = () =>{
+    logout();
+  }
 
   // const [name, setName] = useState("");
   // console.log(name);
@@ -138,7 +144,7 @@ const Header = () => {
           <SearchAutocomplete />
         </Box>
         
-        {!isLoggedIn ? (
+        {!user ? (
           <>
             <Button onClick={handleClick} color="inherit" sx={{ ml: 2 }}>
               Login/Signup
@@ -150,10 +156,13 @@ const Header = () => {
               />
             )}
           </>
-        ) : (
-          <Button onClick={userProfile} color="inherit" sx={{ ml: 2 }}>
-            Welcome, Mahith
-          </Button>
+        ) : (<><Button onClick={userProfile} color="inherit" sx={{ ml: 2 }}>
+        Welcome, {user.username}
+      </Button>
+      <Button onClick={handleLogout} color="inherit" sx={{ ml: 2 }}>
+      Logout
+    </Button></>
+          
         )}
       </Toolbar>
     </AppBar>

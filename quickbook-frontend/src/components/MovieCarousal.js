@@ -62,9 +62,10 @@ export default function MovieCarousal() {
     ],
   };
 
-  const bookTicket = () => {
-    // console.log("/movie/" + index);
+  const bookTicket = (index) => {
+    console.log("/movieeee/", index);
     navigate("/movie");
+    // navigate(`/movie/${index}`);
   };
 
   const movies = [
@@ -117,7 +118,7 @@ export default function MovieCarousal() {
               />
               <Button
                 variant="contained"
-                onClick={bookTicket}
+                onClick={() => bookTicket(index)}
                 sx={{ marginTop: 1, marginRight: 5, marginLeft: 12 }}
               >
                 Book Now

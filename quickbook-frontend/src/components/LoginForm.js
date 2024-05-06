@@ -1,190 +1,160 @@
-import React from "react";
-import { useState } from "react";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, message } from "antd";
-import axios from "axios";
-import "./loginForm.css"; // to set the login form at the center of the page
-import RegisterForm from "./RegisterForm";
+import React, { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import wrapPromiseWithToast from "../utils/wrapPromiseWithToast";
+import { TextField, Button, Box, Typography, IconButton, Paper } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close'; // Import a close icon from Material UI
+import { useAuth } from '../context/auth.context';
+import { message } from "antd";
+import RegisterForm from './RegisterForm';
 
-const App = ({ onLoginToggle, onLoggedInToggle }) => {
+const LoginForm = (onLoggedInToggle) => {
+  // State to manage the form's visibility
+  const [isVisible, setIsVisible] = useState(true);
+  const [username, setUserName] = useState("");
+//   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const [showRegisterForm, setShowRegisterForm] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const onFinish = async (values) => {
-    console.log(values);
 
-    try {
-      let response;
-      if (showRegisterForm) {
-        // Submit registration form
-        response = await axios.post("http://localhost:8090/register", values);
-        console.log("Registration successful:", response.data);
-        const res = response.data;
-        if (res.success) {
-          message.success(res.message);
-        } else {
-          message.error(res.message);
-        }
-        // message.success('Registration successful!');
-      } else {
-        // Submit login form
-        response = await axios.post("http://localhost:8090/login", values);
-        console.log("Login successful:", response.data);
-        const res = response.data;
-        if (res.success) {
-          message.success(res.message);
-          onLoggedInToggle();
-        } else {
-          message.error(res.message);
-        }
-        // message.success('Login successful!');
-      }
-    } catch (error) {
-      console.error("Form submission failed:", error);
-      message.error("Form submission failed. Please try again later.");
+  const {login} = useAuth();
+
+  // Function to check if all required fields are filled
+  const validateFields = () => {
+    const missingFields = [];
+    if (!username) missingFields.push("Username");
+    // if (!email) missingFields.push("Email");
+    if (!password) missingFields.push("Password");
+
+    if (missingFields.length) {
+      toast.error(`Please fill in the following fields: ${missingFields.join(", ")}`);
+      return false; // Validation failed
     }
 
-    // const response  = await axios.post('http://localhost:8090/login', values, {
-    //     headers:{"Content-Type":"application/json"}
-    // })
-    // console.log(response);
-    // const res = response.data;
-    // if(res.success){
-    //     message.success(res.message);
-    // }
-    // else{
-    //     message.error(res.message);
-    // }
-    // message.success("You are registered");
-    // message.error("Error occurred");
+    return true; // Validation succeeded
   };
 
-  const handleClose = () => {
-    onLoginToggle();
-  };
-  const handleRegisterClick = () => {
-    // Show the RegisterForm component when register button is clicked
+  // Function to simulate registration process
+  const handleRegisterButton = async () => {
     setShowRegisterForm(true);
   };
+
+
+const handleLogin = async ()=>{
+    console.log("Login");
+    if (validateFields()) {
+      try {
+        // Await the asynchronous register function to ensure proper error handling
+        const response = await login(username, password);
+        const res=response.data;
+        if (res.success) {
+          // Registration was successful
+          // message.success("Registration successful!");
+          toast.success("Successfully Logged In!");
+        } else {
+          // If success is false, display error messages
+          // message.error(response.message || "Registration failed.");
+          toast.error(res.message || "Login failed. Please try again.");
+        }
+  
+      } catch (error) {
+        // Handle exceptions and unexpected errors
+        console.error("Error during Logging in:", error);
+  
+        const errorMessage = error.response?.data?.error || "An unexpected error occurred.";
+        message.error(errorMessage); // Display error message from server
+        toast.error("An error occurred during Logging in. Please try again.");
+      }
+    } else {
+      // Validation failed, inform user to fill in required fields
+      toast.error("Please fill in all required fields.");
+    }
+}
+  // Function to close the form
+  const closeForm = () => {
+    setIsVisible(false); // Hide the form
+  };
+
+  if (!isVisible) {
+    return null; // Don't render if the form is not visible
+  }
+
   return (
-    <div>
-      {!showRegisterForm ? (
-        <div className="popup">
-          <div className="popup-inner">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginBottom: "20px",
-              }}
-            >
-              <h3
-                style={{
-                  color: "black",
-                }}
-              >
-                {" "}
-                Welcome to QuickBook! Login or create an account now!
-              </h3>
-              <button onClick={handleClose} style={{ padding: "5px" }}>
-                x
-              </button>
-            </div>
-            <Form
-              name="normal_login"
-              className="login-form"
-              initialValues={{
-                remember: true,
-              }}
-              onFinish={onFinish}
-            >
-              {/* <Form.Item
-        name="username"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your Username!',
-          },
-        ]}
+    <>
+      <ToastContainer position="top-right" autoClose={3000} />
+      <Box
+        component="div"
+        sx={{
+          position: 'fixed', // Fixed position
+          top: '50%', // Center vertically
+          left: '50%', // Center horizontally
+          transform: 'translate(-50%, -50%)', // Proper centering
+          zIndex: 1000, // High z-index
+          background: 'rgba(255, 255, 255, 0.9)', // Slightly transparent background
+          boxShadow: 24, // Shadow for depth
+          padding: 4, // Padding
+          borderRadius: 2, // Rounded corners
+        }}
       >
-        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
-      </Form.Item> */}
-              <Form.Item
-                name="email"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input
-                  prefix={<UserOutlined className="site-form-item-icon" />}
-                  placeholder="Email"
-                />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Password!",
-                  },
-                ]}
-              >
-                <Input
-                  prefix={<LockOutlined className="site-form-item-icon" />}
-                  type="password"
-                  placeholder="Password"
-                />
-              </Form.Item>
-              {/* <Form.Item>
-        <Form.Item name="remember" valuePropName="checked" noStyle>
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6">Login/Register</Typography>
+          <IconButton onClick={closeForm}>
+            <CloseIcon /> {/* Close button */}
+          </IconButton>
+        </Box>
 
-        <a className="login-form-forgot" href="">
-          Forgot password
-        </a>
-      </Form.Item> */}
+        {!showRegisterForm ? (<Box component="form" onSubmit={(e) => e.preventDefault()}> {/* Prevent default submit */}
+          <TextField
+            name="username"
+            label="Username"
+            value={username}
+            onChange={(e) => setUserName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
 
-              <Form.Item>
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="login-form-button"
-                  >
-                    Login
-                  </Button>
-                  {/* <br></br> */}
-                  <p
-                    style={{
-                      marginLeft: "10px",
-                      marginRight: "10px",
-                      marginTop: "2px",
-                    }}
-                  >
-                    Or
-                  </p>
-                  {/* Or <a href={RegisterForm}>register now!</a> */}
-                  <Button
-                    onClick={handleRegisterClick}
-                    type="primary"
-                    htmlType="submit"
-                    className="login-form-button"
-                  >
-                    Register now!
-                  </Button>
-                </div>
-              </Form.Item>
-            </Form>
-          </div>
-        </div>
-      ) : (
-        <RegisterForm />
-      )}
-    </div>
+          {/* <TextField
+            name="email"
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            fullWidth
+            margin="normal"
+          /> */}
+
+          <TextField
+            name="password"
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+
+          <Button
+            type="button" // To prevent default form submission
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+            onClick={handleLogin}
+          >
+            Login
+          </Button>
+          <Button
+            type="button" // To prevent default form submission
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+            onClick={handleRegisterButton}
+          >
+            Don't Have an account, Register Here
+          </Button>
+        </Box>) : (<RegisterForm/>)}
+      </Box>
+    </>
   );
 };
-export default App;
+
+export default LoginForm;

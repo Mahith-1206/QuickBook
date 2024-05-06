@@ -7,9 +7,10 @@ import {
 } from "../models/userModel.js";
 
 const createUserController = async (req, res) => {
+  console.log("Entered backend");
   try {
-    const userId = await createUser(req.body);
-    res.status(201).json({ success: true, userId });
+    const userData = await createUser(req.body);
+    res.status(201).json({ success: true, userData });
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ success: false, error: "Could not create user" });

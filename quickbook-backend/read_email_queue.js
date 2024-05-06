@@ -17,17 +17,25 @@ async function run() {
   messageQueue.process(async (job) => {
     console.log("Processing : " + job.id);
     console.log("Processing data : " + job.data.name);
+    console.log("Processing data : " + job.data.email);
 
     const name = job.data.name;
     const email = job.data.email;
-    const eventName = job.data.eventName;
-    const eventDate = job.data.eventDate;
+    const theatreName = job.data.theatreName;
+    const movieName = job.data.movieName;
+    const seatNumbers = job.data.seatNumbers;
 
     const mailOptions = {
       from: "geallapallymahithkumar@gmail.com",
       to: email,
       subject: "Event Booking Confirmation",
-      text: `Dear ${name},\n\nThank you for booking the event "${eventName}" on ${eventDate}. We look forward to seeing you there!\n\nBest regards,\nYour Event Team`,
+      html: `<p>Dear ${name},</p>
+             <p>Thank you for booking the event "${movieName}"</p>
+             <p> The booking venue is "${theatreName}"</p> 
+             <p> Seat Numbers is/are "${seatNumbers}"</p>
+             
+             <p>We look forward to seeing you there!</p>
+             <p>Best regards,<br>Your Event Team</p>`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

@@ -79,6 +79,17 @@ function PaymentScreen() {
         }
       );
 
+      const emailResponse = await axios.post(
+        "http://localhost:3000/emails/bookEvent",
+        {
+          name: "Mahith",
+          email: user.email,
+          theatreName: theatreName,
+          movieName: movieName,
+          seatNumbers: seatNumbersString,
+        }
+      );
+
       console.log("response success? ", response.data.success);
       console.log("booking response success? ", response.data.success);
       if (

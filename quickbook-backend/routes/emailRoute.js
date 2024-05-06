@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 router.post("/bookEvent", async (req, res) => {
-  const { name, email, eventName, eventDate } = req.body;
+  const { name, email, theatreName, movieName, seatNumbers } = req.body;
 
   await redisClient.set(name, email);
   console.log("redis lo value set chesam");
@@ -24,8 +24,9 @@ router.post("/bookEvent", async (req, res) => {
   messageQueue.add({
     name: name,
     email: email,
-    eventName: eventName,
-    eventDate: eventDate,
+    theatreName: theatreName,
+    movieName: movieName,
+    seatNumbers: seatNumbers,
   });
 
   res.status(200).send("Message Queued. You will receive email shortly");

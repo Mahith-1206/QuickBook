@@ -112,61 +112,59 @@ const searchMovieController = async (req, res) => {
   res.status(200).json(data);
 };
 
+// const getMoviesController = async (req, res) => {
+//   try {
+//     const movies = await getAllMovieIds();
+
+//     console.log(movies);
+//     if (!movies || movies.length === 0) {
+//       return res
+//         .status(404)
+//         .json({ success: false, error: "No movies found in the database" });
+//     }
+
+//     const apiKey = "cd3b90152fe991306b189d1e8dd01428";
+//     const moviesData = [];
+
+//     for (const dbmovie of movies) {
+//       const movieInfoUrl = `https://api.themoviedb.org/3/movie/${dbmovie.EventID}?api_key=${apiKey}`;
+
+//       const response = await axios.get(movieInfoUrl);
+//       const movieDetails = response.data;
+
+//       const { original_title, poster_path } = movieDetails;
+//       const genreName = dbmovie.Genre;
+
+//       const movie = {
+//         id: dbmovie.EventID,
+//         title: original_title,
+//         language: dbmovie.Language,
+//         genre: genreName,
+//         poster: poster_path,
+//       };
+
+//       moviesData.push(movie);
+//     }
+
+//     res.status(200).json({ success: true, movies: moviesData });
+//   } catch (error) {
+//     console.error("Error getting movie details:", error);
+//     res
+//       .status(500)
+//       .json({ success: false, error: "Could not fetch movie details" });
+//   }
+// };
+
 const getMoviesController = async (req, res) => {
-  try {
-    const movies = await getAllMovieIds();
-
-    console.log(movies);
-    if (!movies || movies.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, error: "No movies found in the database" });
-    }
-
-    const apiKey = "cd3b90152fe991306b189d1e8dd01428";
-    const moviesData = [];
-
-    for (const dbmovie of movies) {
-      const movieInfoUrl = `https://api.themoviedb.org/3/movie/${dbmovie.EventID}?api_key=${apiKey}`;
-
-      const response = await axios.get(movieInfoUrl);
-      const movieDetails = response.data;
-
-      const { original_title, poster_path } = movieDetails;
-      const genreName = dbmovie.Genre;
-
-      const movie = {
-        id: dbmovie.EventID,
-        title: original_title,
-        language: dbmovie.Language,
-        genre: genreName,
-        poster: poster_path,
-      };
-
-      moviesData.push(movie);
-    }
-
-    res.status(200).json({ success: true, movies: moviesData });
-  } catch (error) {
-    console.error("Error getting movie details:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Could not fetch movie details" });
-  }
-};
-
-const getRedisMoviesController = async (req, res) => {
   try {
     const cachedMovies = await redisClient.get("movies");
     if (cachedMovies) {
       console.log("Movies found in cache");
-      return res
-        .status(200)
-        .json({
-          success: true,
-          cached: true,
-          movies: JSON.parse(cachedMovies),
-        });
+      return res.status(200).json({
+        success: true,
+        cached: true,
+        movies: JSON.parse(cachedMovies),
+      });
     }
 
     const movies = await getAllMovieIds();
@@ -189,11 +187,6 @@ const getRedisMoviesController = async (req, res) => {
 
       const { original_title, poster_path } = movieDetails;
       const genreName = dbmovie.Genre;
-
-      const posterUrl = `https://image.tmdb.org/t/p/original${poster_path}`;
-      const posterImageResponse = await axios.get(posterUrl, {
-        responseType: "arraybuffer",
-      });
 
       const movie = {
         id: dbmovie.EventID,

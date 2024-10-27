@@ -4,7 +4,8 @@ const createUser = async (userData) => {
   const { username, email, password } = userData;
 
   // Insert the new user into the 'users' table
-  const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+  const query =
+    "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
   const [result] = await pool.query(query, [username, email, password]);
 
   // Return the inserted user data, including the new user ID
@@ -16,7 +17,7 @@ const createUser = async (userData) => {
 };
 
 const getUserByUsername = async (username) => {
-  const query = 'SELECT * FROM users WHERE username = ?'; // Parameterized query
+  const query = "SELECT * FROM users WHERE username = ?"; // Parameterized query
   const [rows] = await pool.query(query, [username]); // Execute query with parameter
 
   if (rows.length > 0) {
@@ -25,7 +26,6 @@ const getUserByUsername = async (username) => {
 
   return null; // No user found with the given username
 };
-
 
 const getUserById = async (userId) => {
   const query = "SELECT * FROM users WHERE id = ?";
@@ -50,4 +50,11 @@ const deleteUser = async (userId) => {
   await pool.query(query, [userId]);
 };
 
-export { createUser, getUserById, getUsers, updateUser, deleteUser, getUserByUsername };
+export {
+  createUser,
+  getUserById,
+  getUsers,
+  updateUser,
+  deleteUser,
+  getUserByUsername,
+};

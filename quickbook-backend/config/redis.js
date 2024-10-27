@@ -11,7 +11,8 @@
 
 // module.exports = redisClient;
 
-import redis from "redis";
-const redisClient = redis.createClient();
-await redisClient.connect();
-export default redisClient;
+////////
+//import redis from "redis";
+// const redisClient = redis.createClient();
+// await redisClient.connect();
+//export default redisClient;

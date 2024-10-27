@@ -6,7 +6,7 @@ import {
   getAllPromotedMovieIds,
 } from "../models/eventVenueModel.js";
 import db from "../config/dbConfig.js";
-import redisClient from "../config/redis.js";
+//import redisClient from "../config/redis.js";
 
 const getMovieController = async (req, res) => {
   try {
@@ -174,15 +174,15 @@ const searchMovieController = async (req, res) => {
 
 const getMoviesController = async (req, res) => {
   try {
-    const cachedMovies = await redisClient.get("movies");
-    if (cachedMovies) {
-      console.log("Movies found in cache");
-      return res.status(200).json({
-        success: true,
-        cached: true,
-        movies: JSON.parse(cachedMovies),
-      });
-    }
+    // const cachedMovies = await redisClient.get("movies");
+    // if (cachedMovies) {
+    //   console.log("Movies found in cache");
+    //   return res.status(200).json({
+    //     success: true,
+    //     cached: true,
+    //     movies: JSON.parse(cachedMovies),
+    //   });
+    // }
 
     const movies = await getAllMovieIds();
 
@@ -216,7 +216,7 @@ const getMoviesController = async (req, res) => {
       moviesData.push(movie);
     }
 
-    await redisClient.set("movies", JSON.stringify(moviesData));
+    //await redisClient.set("movies", JSON.stringify(moviesData));
 
     res.status(200).json({ success: true, cached: false, movies: moviesData });
   } catch (error) {

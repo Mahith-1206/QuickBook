@@ -47,70 +47,70 @@ function App() {
               </>
             }
           />
-          {/* <Route
-        path="/movie/:movieId" // Specify the route parameter for movieId
-        element={
-          <>
-            <ThemeProvider theme={theme}>
-              <Header /> <Navigation /> <SelectMovieScreen />
-            </ThemeProvider>
-          </>
-        }
-      />
-      <Route
-        path="/bookSeat"
-        element={
-          <>
-            <ThemeProvider theme={theme}>
-              <Header /> <Navigation />
-              <SeatBookingTest />
-            </ThemeProvider>
-          </>
-        }
-      />
-      <Route
-        path="/payment"
-        element={
-          <>
-            <ThemeProvider theme={theme}>
-              <Header /> <PaymentScreen />
-            </ThemeProvider>
-          </>
-        }
-      />
-      <Route
-        path="/home"
-        element={
-          <>
-            <ThemeProvider theme={theme}>
-              <Header />
-              <Navigation /> <MovieCarousal />
-            </ThemeProvider>
-          </>
-        }
-      />
-      <Route
-        path="/movies"
-        element={
-          <>
-            <ThemeProvider theme={theme}>
-              <Header />
-              <Navigation /> <Movies />
-            </ThemeProvider>
-          </>
-        }
-      />
-      <Route
-        path="/user"
-        element={
-          <>
-            <ThemeProvider theme={theme}>
-              <Header />
-              <User />
-            </ThemeProvider>
-          </>
-        }
-      /> */}
+          <Route
+            path="/movie/:movieId" // Specify the route parameter for movieId
+            element={
+              <>
+                <ThemeProvider theme={theme}>
+                  <Header /> <Navigation /> <SelectMovieScreen />
+                </ThemeProvider>
+              </>
+            }
+          />
+          <Route
+            path="/bookSeat"
+            element={
+              <>
+                <ThemeProvider theme={theme}>
+                  <Header /> <Navigation />
+                  <SeatBookingTest />
+                </ThemeProvider>
+              </>
+            }
+          />
+          <Route
+            path="/payment"
+            element={
+              <>
+                <ThemeProvider theme={theme}>
+                  <Header /> <PaymentScreen />
+                </ThemeProvider>
+              </>
+            }
+          />
+          <Route
+            path="/home"
+            element={
+              <>
+                <ThemeProvider theme={theme}>
+                  <Header />
+                  <Navigation /> <MovieCarousal />
+                </ThemeProvider>
+              </>
+            }
+          />
+          <Route
+            path="/movies"
+            element={
+              <>
+                <ThemeProvider theme={theme}>
+                  <Header />
+                  <Navigation /> <Movies />
+                </ThemeProvider>
+              </>
+            }
+          />
+          <Route
+            path="/user"
+            element={
+              <>
+                <ThemeProvider theme={theme}>
+                  <Header />
+                  <User />
+                </ThemeProvider>
+              </>
+            }
+          />
         </Routes>
       </AuthProvider>
     </GoogleOAuthProvider>

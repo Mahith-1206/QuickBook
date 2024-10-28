@@ -161,7 +161,7 @@ const Header = () => {
           sx={{ mr: 1 }}
           onClick={handleLogoClick}
         >
-          <h4>QuickBookV2</h4>
+          <h4>QuickBookV3</h4>
           {/* This icon serves as the app logo */}
         </IconButton>
         {/* This Box component serves as a spacer */}

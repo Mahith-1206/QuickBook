@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Typography,
@@ -8,10 +8,10 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
-import { useAuth } from '../context/auth.context';
+} from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../context/auth.context";
 
 function PaymentScreen() {
   const [redeem, setRedeem] = useState(false);
@@ -33,8 +33,8 @@ function PaymentScreen() {
   } = location.state;
 
   const [paymentDetails, setPaymentDetails] = useState({
-    movieName: 'Dune: Part Two',
-    showTime: '7:00 PM',
+    movieName: "Inside Out",
+    showTime: "21:00",
     tickets: totalSeats,
     pricePerTicket: 12.99,
     totalPrice: 0, // Initial value, calculated by useEffect
@@ -43,7 +43,8 @@ function PaymentScreen() {
 
   // Use useEffect to update totalPrice when tickets or pricePerTicket changes
   useEffect(() => {
-    const newTotalPrice = paymentDetails.tickets * paymentDetails.pricePerTicket;
+    const newTotalPrice =
+      paymentDetails.tickets * paymentDetails.pricePerTicket;
     setPaymentDetails((prevDetails) => ({
       ...prevDetails,
       totalPrice: newTotalPrice,
@@ -62,22 +63,36 @@ function PaymentScreen() {
   };
 
   const handlePayment = async () => {
-    console.log('Processing payment...');
+    console.log("Processing payment...");
+    console.log("positions", positions);
     try {
       const response = await axios.put(
-        'http://localhost:4000/venue/book-seats',
+        "http://localhost:3000/venue/book-seats",
         {
           booked: true,
           venueId: id,
-          seats: positions,
+          positions: positions,
         }
       );
 
       const bookingResponse = await axios.put(
-        'http://localhost:4000/venue/booking-seats',
+        "http://localhost:3000/venue/booking-seats",
         {
           username: user.username,
           venueId: id,
+          seatNumbers: seatNumbersString,
+          positions: positions,
+          eventId: movieId,
+        }
+      );
+
+      const emailbookingResponse = await axios.post(
+        "http://localhost:3000/emails/bookEvent",
+        {
+          name: "Mahith",
+          email: "mahith.kumar1997@gmail.com",
+          theatreName: paymentDetails.theatre,
+          movieName: paymentDetails.movieName,
           seatNumbers: seatNumbersString,
           eventId: movieId,
         }
@@ -87,13 +102,13 @@ function PaymentScreen() {
         setIsBookingConfirmed(true); // Indicate booking confirmation
       }
     } catch (error) {
-      console.error('Error during booking:', error);
+      console.error("Error during booking:", error);
       setError(error.message); // Store the error message
     }
   };
 
   const goHome = () => {
-    navigate('/home'); // Navigate to the home page
+    navigate("/home"); // Navigate to the home page
   };
 
   return (
@@ -104,7 +119,7 @@ function PaymentScreen() {
       display="flex"
       marginTop="30px"
     >
-      <Paper elevation={3} style={{ padding: '20px', maxWidth: '600px' }}>
+      <Paper elevation={3} style={{ padding: "20px", maxWidth: "600px" }}>
         <Typography variant="h5" component="h2" gutterBottom>
           Complete Your Payment
         </Typography>
@@ -165,7 +180,7 @@ function PaymentScreen() {
           </Grid>
 
           {redeem && (
-            <Grid item xs={12} style={{ textAlign: 'center' }}>
+            <Grid item xs={12} style={{ textAlign: "center" }}>
               <Typography variant="body1">Points Redeemed!</Typography>
             </Grid>
           )}
@@ -184,10 +199,15 @@ function PaymentScreen() {
       </Paper>
 
       <Dialog open={isBookingConfirmed}>
-        <DialogTitle style={{ fontWeight: 'bold' }}>Booking Confirmed!</DialogTitle>
+        <DialogTitle style={{ fontWeight: "bold" }}>
+          Booking Confirmed!
+        </DialogTitle>
         <DialogContent>
           Your ticket will be sent to your email shortly.
-          <Button onClick={goHome} style={{ fontWeight: 'bold', marginTop: '20px' }}>
+          <Button
+            onClick={goHome}
+            style={{ fontWeight: "bold", marginTop: "20px" }}
+          >
             Okay
           </Button>
         </DialogContent>

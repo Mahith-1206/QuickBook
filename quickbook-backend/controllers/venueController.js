@@ -20,14 +20,14 @@ const getVenueSeatsController = async (req, res) => {
 
 const bookSeatsController = async (req, res) => {
   try {
-    const { booked, venueId, seats } = req.body;
+    const { booked, venueId, positions } = req.body;
 
     if (!venueId) {
       return res.status(400).json({ error: "Invalid request body" });
     }
-    console.log(seats);
+    console.log(positions);
 
-    await bookSeats(booked, venueId, seats);
+    await bookSeats(booked, venueId, positions);
     res.status(200).json({ success: true, message: "Ticket booked success" });
   } catch (error) {
     console.error("Error updating seat booking", error);

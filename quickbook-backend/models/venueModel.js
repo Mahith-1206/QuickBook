@@ -10,10 +10,10 @@ const getVenueSeatsByVenueId = async (venueId) => {
   }
 };
 
-const bookSeats = async (booked, venueId, seats) => {
+const bookSeats = async (booked, venueId, positions) => {
   try {
-    for (var i = 0; i < seats.length; i++) {
-      const query = `UPDATE Venues SET seats = JSON_SET(seats, '$[${seats[i].row}][${seats[i].column}].booked', ${booked}) WHERE venue_id = ?`;
+    for (var i = 0; i < positions.length; i++) {
+      const query = `UPDATE Venues SET seats = JSON_SET(seats, '$[${positions[i].row}][${positions[i].column}].booked', ${booked}) WHERE venue_id = ?`;
       console.log("query is: ", query);
       await pool.query(query, [venueId]);
     }

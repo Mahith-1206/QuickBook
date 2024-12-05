@@ -44,7 +44,8 @@ const addBookingRow = async (
       eventId,
       status
     );
-
+    console.log("printing positions", positions);
+    console.log("positions", positions);
     const seatPositionsString = JSON.stringify(positions);
     const query = `INSERT INTO UserBookings (username, VenueID, Time, seatNumbers, seatPositions, EventID, Status) VALUES (?, ?, ?, ?, ?, ?, ?)`;
     const [rows] = await pool.query(query, [

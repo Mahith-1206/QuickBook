@@ -20,6 +20,7 @@ import { AccountCircle as AccountCircleIcon } from "@mui/icons-material";
 import axios from "axios";
 import { useAuth } from "../context/auth.context";
 import { useNavigate, useLocation } from "react-router-dom";
+import NewTicketForm from "./NewTicketForm";
 
 // Assuming userData is the object that contains the user's information
 const userData = {
@@ -58,6 +59,7 @@ const User = () => {
   const [ticketData, setTicketData] = useState([]);
   const { user } = useAuth();
   const [error, setError] = useState(null);
+  const [view, setView] = useState(false);
 
   const fetchTickets = async () => {
     const userName = user.username;
@@ -78,9 +80,13 @@ const User = () => {
     fetchTickets(); // Fetch movies when component mounts
   }, []);
 
+  const handleSupport = async (ticket) => {
+    setView(!view);
+  };
+
   const cancelTicket = async (ticket) => {
     try {
-      console.log("positions, ", ticket.seats);
+      console.log("positions, ", ticket.seatPositions);
 
       console.log("request body::", ticket.VenueID, ticket.seatPositions);
       const response = await axios.put(
@@ -88,7 +94,7 @@ const User = () => {
         {
           booked: false,
           venueId: ticket.VenueID,
-          seats: ticket.seatPositions,
+          positions: ticket.seatPositions,
         }
       );
 
@@ -96,6 +102,17 @@ const User = () => {
         "http://localhost:3000/venue/cancel-seats",
         {
           BookingID: ticket.BookingID,
+        }
+      );
+
+      const emailbookingResponse = await axios.post(
+        "http://localhost:3000/emails/cancelEvent",
+        {
+          name: "Mahith",
+          email: "mahith.kumar1997@gmail.com",
+          theatreName: ticket.EventName,
+          movieName: ticket.venue_name,
+          seatNumbers: ticket.seatNumbers,
         }
       );
 
@@ -117,72 +134,80 @@ const User = () => {
 
   return (
     <Box sx={{ maxWidth: 800, margin: "auto", mt: 5 }}>
-      <Paper elevation={3} sx={{ padding: 3 }}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item>
-            <Avatar sx={{ bgcolor: "secondary.main" }}>
-              <AccountCircleIcon />
-            </Avatar>
+      {!view && (
+        <Paper elevation={3} sx={{ padding: 3 }}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item>
+              <Avatar sx={{ bgcolor: "secondary.main" }}>
+                <AccountCircleIcon />
+              </Avatar>
+            </Grid>
+            <Grid item xs>
+              <Typography variant="h5">{userData.name}</Typography>
+              <Typography variant="body1">
+                Reward Points: {userData.rewardPoints}
+              </Typography>
+              <Typography variant="body1">
+                Member Type: {userData.memberType}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs>
-            <Typography variant="h5">{userData.name}</Typography>
-            <Typography variant="body1">
-              Reward Points: {userData.rewardPoints}
-            </Typography>
-            <Typography variant="body1">
-              Member Type: {userData.memberType}
-            </Typography>
-          </Grid>
-        </Grid>
-        <Divider sx={{ my: 3 }} />
-        <Typography variant="h6" gutterBottom>
-          Past Tickets
-        </Typography>
-        <List>
-          {ticketData.map((ticket) => (
-            <ListItem key={ticket.BookingID} sx={{ display: "block", mb: 2 }}>
-              <Card variant="outlined">
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <div>
-                    <CardContent>
-                      <Typography variant="h6">{ticket.EventName}</Typography>
-                      <Typography variant="h6">
-                        Status: {ticket.Status}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Booking ID: {ticket.BookingID}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Date: {ticket.Time}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Theatre: {ticket.venue_name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Seats: {ticket.seatNumbers}
-                      </Typography>
-                    </CardContent>
-                  </div>
+          <Divider sx={{ my: 3 }} />
+          <Typography variant="h6" gutterBottom>
+            Past Tickets
+          </Typography>
+          <List>
+            {ticketData.map((ticket) => (
+              <ListItem key={ticket.BookingID} sx={{ display: "block", mb: 2 }}>
+                <Card variant="outlined">
                   <div
-                    style={{
-                      display: "flex",
-                      alignContent: "center",
-                      justifyContent: "center",
-                      marginRight: "20px",
-                    }}
+                    style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <Button onClick={() => cancelTicket(ticket)}>
-                      Cancel Ticket
-                    </Button>
+                    <div>
+                      <CardContent>
+                        <Typography variant="h6">{ticket.EventName}</Typography>
+                        <Typography variant="h6">
+                          Status: {ticket.Status}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Booking ID: {ticket.BookingID}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Date: {ticket.Time}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Theatre: {ticket.venue_name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Seats: {ticket.seatNumbers}
+                        </Typography>
+                      </CardContent>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignContent: "center",
+                        justifyContent: "center",
+                        //marginRight: "10px",
+                      }}
+                    >
+                      <Button onClick={() => cancelTicket(ticket)}>
+                        Cancel Ticket
+                      </Button>
+                      <Button onClick={() => handleSupport(ticket)}>
+                        Support
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            </ListItem>
-          ))}
-        </List>
-      </Paper>
+                </Card>
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      )}
+
+      {view && <NewTicketForm />}
+
       <Dialog open={isBookingConfirmed}>
         <DialogTitle style={{ fontWeight: "bold", marginLeft: "50px" }}>
           Booking Cancelled!

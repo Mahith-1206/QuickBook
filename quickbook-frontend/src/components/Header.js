@@ -57,6 +57,10 @@ const Header = () => {
     navigate("/user");
   };
 
+  const handleSupportClick = () => {
+    navigate("/support");
+  };
+
   const handleLogout = () => {
     logout();
   };
@@ -185,9 +189,13 @@ const Header = () => {
 
         {!user ? (
           <>
+            <Button onClick={handleSupportClick} color="inherit" sx={{ ml: 2 }}>
+              Customer Support
+            </Button>
             <Button onClick={handleClick} color="inherit" sx={{ ml: 2 }}>
               Login/Signup
             </Button>
+
             {showLogin && (
               <LoginForm
                 onLoginToggle={toggleLogin}
@@ -197,6 +205,9 @@ const Header = () => {
           </>
         ) : (
           <>
+            <Button onClick={handleSupportClick} color="inherit" sx={{ ml: 2 }}>
+              Customer Support
+            </Button>
             <Button onClick={userProfile} color="inherit" sx={{ ml: 2 }}>
               Welcome, {user.username}
             </Button>

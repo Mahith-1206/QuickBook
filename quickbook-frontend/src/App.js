@@ -15,6 +15,7 @@ import Movies from "./components/Movies";
 import User from "./components/User";
 import { AuthProvider } from "./context/auth.context";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import SupportPage from "./components/SupportPage";
 
 const clientId =
   "275711832699-tftemu6kv68m4t50vbeipm5ampg0frbk.apps.googleusercontent.com";
@@ -107,6 +108,17 @@ function App() {
                 <ThemeProvider theme={theme}>
                   <Header />
                   <User />
+                </ThemeProvider>
+              </>
+            }
+          />
+          <Route
+            path="/support"
+            element={
+              <>
+                <ThemeProvider theme={theme}>
+                  <Header />
+                  <SupportPage />
                 </ThemeProvider>
               </>
             }
